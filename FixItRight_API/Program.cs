@@ -17,6 +17,7 @@ builder.Services.ConfigureIdentity();
 builder.Services.ConfigureManager();
 builder.Services.ConfigureLoggerService();
 builder.Services.ConfigureCors();
+builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Host.UseSerilog((hostContext, configuration) =>
 {
