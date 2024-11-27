@@ -16,6 +16,7 @@ builder.Services.AddAuthentication();
 builder.Services.ConfigureIdentity();
 builder.Services.ConfigureManager();
 builder.Services.ConfigureLoggerService();
+builder.Services.ConfigureCors();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Host.UseSerilog((hostContext, configuration) =>
 {
@@ -33,6 +34,8 @@ if (app.Environment.IsDevelopment())
 app.UseExceptionHandler(opt => { });
 
 app.UseHttpsRedirection();
+
+app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 
