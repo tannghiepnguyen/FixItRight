@@ -1,5 +1,9 @@
 ﻿using FixItRight_Domain.Models;
+using FixItRight_Domain.Repositories;
 using FixItRight_Infrastructure.Persistence;
+using FixItRight_Infrastructure.Repositories;
+using FixItRight_Service.IServices;
+using FixItRight_Service.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +20,6 @@ namespace FixItRight_API.Extension
 				o.Password.RequireUppercase = false;
 				o.Password.RequireNonAlphanumeric = false;
 				o.Password.RequiredLength = 5;
-				o.User.RequireUniqueEmail = false;
 			})
 			.AddEntityFrameworkStores<RepositoryContext>()
 			.AddDefaultTokenProviders();
@@ -26,6 +29,12 @@ namespace FixItRight_API.Extension
 		{
 			services.AddDbContext<RepositoryContext>(options =>
 				options.UseSqlServer(configuration.GetConnectionString("DbString")));
+		}
+
+		public static void ConfigureManager(this IServiceCollection services)
+		{
+			services.AddScoped<IRepositoryManager, RepositoryManager>();
+			services.AddScoped<IServiceManager, ServiceManager>();
 		}
 	}
 }
