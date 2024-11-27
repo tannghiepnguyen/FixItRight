@@ -22,6 +22,7 @@ namespace FixItRight_Infrastructure.Persistence
 			builder.ApplyConfiguration(new ChatConfiguration());
 			builder.ApplyConfiguration(new RatingConfiguration());
 			builder.ApplyConfiguration(new TransactionConfiguration());
+			builder.ApplyConfiguration(new RoleConfiguration());
 		}
 
 		public DbSet<User> Users { get; set; }

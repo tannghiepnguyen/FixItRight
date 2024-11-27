@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FixItRight_API.Extension
 {
-	public static class SericeExtensions
+	public static class ServiceExtensions
 	{
 		public static void ConfigureIdentity(this IServiceCollection services)
 		{
@@ -36,5 +36,7 @@ namespace FixItRight_API.Extension
 			services.AddScoped<IRepositoryManager, RepositoryManager>();
 			services.AddScoped<IServiceManager, ServiceManager>();
 		}
+
+		public static void ConfigureLoggerService(this IServiceCollection services) => services.AddSingleton<ILoggerManager, LoggerManager>();
 	}
 }
