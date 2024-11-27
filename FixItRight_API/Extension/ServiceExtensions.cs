@@ -4,8 +4,11 @@ using FixItRight_Infrastructure.Persistence;
 using FixItRight_Infrastructure.Repositories;
 using FixItRight_Service.IServices;
 using FixItRight_Service.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace FixItRight_API.Extension
 {
@@ -47,5 +50,31 @@ namespace FixItRight_API.Extension
 					.AllowAnyMethod()
 					.AllowAnyHeader());
 			});
+
+		public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
+		{
+			var jwtSettings = configuration.GetSection("JwtSettings");
+			var secretKey = jwtSettings["secretKey"];
+
+			services.AddAuthentication(opt =>
+			{
+				opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+				opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+			})
+			.AddJwtBearer(options =>
+			{
+				options.TokenValidationParameters = new TokenValidationParameters
+				{
+					ValidateIssuer = true,
+					ValidateAudience = true,
+					ValidateLifetime = true,
+					ValidateIssuerSigningKey = true,
+
+					ValidIssuer = jwtSettings["validIssuer"],
+					ValidAudience = jwtSettings["validAudience"],
+					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+				};
+			});
+		}
 	}
 }
