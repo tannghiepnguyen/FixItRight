@@ -8,6 +8,7 @@ namespace FixItRight_Service.UserServices.DTOs
 		public UserProfile()
 		{
 			CreateMap<UserForRegistrationDto, User>();
+			CreateMap<User, UserForReturnDto>();
 		}
 	}
 }

@@ -58,8 +58,7 @@ namespace FixItRight_Service.UserServices
 		public async Task<bool> ValidateUser(UserForAuthenticationDto userForAuth)
 		{
 			user = await userManager.FindByNameAsync(userForAuth.UserName!);
-			var result = (user != null && await userManager
-				.CheckPasswordAsync(user, userForAuth.Password!));
+			var result = (user != null && await userManager.CheckPasswordAsync(user, userForAuth.Password!) && user.Active);
 			if (!result)
 				logger.LogWarning($"{nameof(ValidateUser)}: " +
 					$"Authentication failed. Wrong user name or password.");
@@ -175,6 +174,17 @@ namespace FixItRight_Service.UserServices
 			}
 			user = currentUser;
 			return await CreateToken(populateExp: false);
+		}
+
+		public async Task<UserForReturnDto> GetUserById(string userId)
+		{
+			var user = await userManager.FindByIdAsync(userId);
+			if (user is null) throw new UserNotFoundException(userId);
+
+			var returnUser = mapper.Map<UserForReturnDto>(user);
+			returnUser.Roles = userManager.GetRolesAsync(user).Result.ToList();
+
+			return returnUser;
 		}
 	}
 }

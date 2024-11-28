@@ -1,4 +1,5 @@
-﻿using FixItRight_Service.IServices;
+﻿using FixItRight_Domain.Exceptions;
+using FixItRight_Service.IServices;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +20,8 @@ namespace FixItRight_API
 			httpContext.Response.ContentType = "application/json";
 			httpContext.Response.StatusCode = exception switch
 			{
+				NotFoundException => StatusCodes.Status404NotFound,
+				BadRequestException => StatusCodes.Status400BadRequest,
 				_ => StatusCodes.Status500InternalServerError
 			};
 			logger.LogError($"Something went wrong: {exception.Message}");
