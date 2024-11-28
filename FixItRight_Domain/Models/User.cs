@@ -15,6 +15,9 @@ namespace FixItRight_Domain.Models
 		public string? CccdBack { get; set; }
 		public DateTime CreatedAt { get; set; }
 		public DateTime? UpdatedAt { get; set; }
+		public string? RefreshToken { get; set; }
+		public DateTime? RefreshTokenExpiryTime { get; set; }
+		public string? Address { get; set; }
 		public ICollection<Chat> CustomerChats { get; set; }
 		public ICollection<Chat> MechanistChats { get; set; }
 		public ICollection<Booking> CustomerBookings { get; set; }

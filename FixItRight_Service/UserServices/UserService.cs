@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FixItRight_Domain.Constants;
+using FixItRight_Domain.Exceptions;
 using FixItRight_Domain.Models;
 using FixItRight_Service.IServices;
 using FixItRight_Service.UserServices.DTOs;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace FixItRight_Service.UserServices
@@ -63,12 +65,28 @@ namespace FixItRight_Service.UserServices
 					$"Authentication failed. Wrong user name or password.");
 			return result;
 		}
-		public async Task<string> CreateToken()
+		public async Task<TokenDto> CreateToken(bool populateExp)
 		{
 			var signingCredentials = GetSigningCredentials();
 			var claims = await GetClaims();
 			var tokenOptions = GenerateTokenOptions(signingCredentials, claims);
-			return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+
+			var refreshToken = GenerateRefreshToken();
+
+			user.RefreshToken = refreshToken;
+
+			if (populateExp)
+				user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+
+			await userManager.UpdateAsync(user);
+
+			var accessToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+
+			return new TokenDto
+			{
+				AccessToken = accessToken,
+				RefreshToken = refreshToken
+			};
 		}
 		private SigningCredentials GetSigningCredentials()
 		{
@@ -83,6 +101,8 @@ namespace FixItRight_Service.UserServices
 			{
 				new Claim(ClaimTypes.Name, user!.UserName!)
 			};
+			claims.Add(new Claim("Id", user.Id));
+			claims.Add(new Claim("Fullname", user.Fullname));
 			var roles = await userManager.GetRolesAsync(user);
 			foreach (var role in roles)
 			{
@@ -103,6 +123,58 @@ namespace FixItRight_Service.UserServices
 				signingCredentials: signingCredentials
 			);
 			return tokenOptions;
+		}
+
+		private string GenerateRefreshToken()
+		{
+			var randomNumber = new byte[32];
+			using (var rng = RandomNumberGenerator.Create())
+			{
+				rng.GetBytes(randomNumber);
+				return Convert.ToBase64String(randomNumber);
+			}
+		}
+
+		private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+		{
+			var jwtSettings = configuration.GetSection("JwtSettings");
+
+			var tokenValidationParameters = new TokenValidationParameters
+			{
+				ValidateAudience = true,
+				ValidateIssuer = true,
+				ValidateIssuerSigningKey = true,
+				IssuerSigningKey = new SymmetricSecurityKey(
+					Encoding.UTF8.GetBytes(jwtSettings["secretKey"])),
+				ValidateLifetime = true,
+				ValidIssuer = jwtSettings["validIssuer"],
+				ValidAudience = jwtSettings["validAudience"]
+			};
+
+			var tokenHandler = new JwtSecurityTokenHandler();
+			SecurityToken securityToken;
+			var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
+
+			var jwtSecurityToken = securityToken as JwtSecurityToken;
+			if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
+				StringComparison.InvariantCultureIgnoreCase))
+			{
+				throw new SecurityTokenException("Invalid token");
+			}
+
+			return principal;
+		}
+
+		public async Task<TokenDto> RefreshToken(TokenDto tokenDto)
+		{
+			var principal = GetPrincipalFromExpiredToken(tokenDto.AccessToken);
+			var currentUser = await userManager.FindByNameAsync(principal.Identity.Name);
+			if (currentUser == null || currentUser.RefreshToken != tokenDto.RefreshToken || currentUser.RefreshTokenExpiryTime <= DateTime.Now)
+			{
+				throw new RequestTokenBadRequest();
+			}
+			user = currentUser;
+			return await CreateToken(populateExp: false);
 		}
 	}
 }

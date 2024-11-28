@@ -15,7 +15,7 @@ namespace FixItRight_API.Controllers
 			this.service = service;
 		}
 
-		[HttpPost("customer")]
+		[HttpPost("customers")]
 		public async Task<IActionResult> RegisterCustomer([FromForm] UserForRegistrationDto userForRegistration)
 		{
 			var result = await service.UserService.RegisterCustomer(userForRegistration);
@@ -30,7 +30,7 @@ namespace FixItRight_API.Controllers
 			return StatusCode(201);
 		}
 
-		[HttpPost("mechanist")]
+		[HttpPost("mechanists")]
 		public async Task<IActionResult> RegisterMechanist([FromForm] UserForRegistrationDto userForRegistration)
 		{
 			var result = await service.UserService.RegisterMechanist(userForRegistration);
@@ -43,6 +43,23 @@ namespace FixItRight_API.Controllers
 				return BadRequest(ModelState);
 			}
 			return StatusCode(201);
+		}
+
+		[HttpPost("login")]
+		public async Task<IActionResult> Authenticate([FromForm] UserForAuthenticationDto user)
+		{
+			if (!await service.UserService.ValidateUser(user))
+				return Unauthorized();
+
+			var tokenDto = await service.UserService.CreateToken(populateExp: true);
+			return Ok(tokenDto);
+		}
+
+		[HttpPost("refresh")]
+		public async Task<IActionResult> Refresh([FromForm] TokenDto tokenDto)
+		{
+			var tokenDtoToReturn = await service.UserService.RefreshToken(tokenDto);
+			return Ok(tokenDtoToReturn);
 		}
 	}
 }
