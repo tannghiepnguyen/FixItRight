@@ -24,6 +24,7 @@ builder.Services.ConfigureLoggerService();
 builder.Services.ConfigureCors();
 builder.Services.ConfigureAutomapper();
 builder.Services.ConfigureJWT(builder.Configuration);
+builder.Services.ConfigureBlobService(builder.Configuration);
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Host.UseSerilog((hostContext, configuration) =>
 {

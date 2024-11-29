@@ -3,6 +3,6 @@
 	public interface IRepositoryManager
 	{
 		IRepairServiceRepository RepairService { get; }
-		void Save();
+		Task SaveAsync();
 	}
 }

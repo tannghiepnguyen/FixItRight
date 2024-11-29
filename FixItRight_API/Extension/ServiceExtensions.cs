@@ -1,4 +1,5 @@
-﻿using FixItRight_Domain.Models;
+﻿using Azure.Storage.Blobs;
+using FixItRight_Domain.Models;
 using FixItRight_Domain.Repositories;
 using FixItRight_Infrastructure.Persistence;
 using FixItRight_Infrastructure.Repositories;
@@ -75,6 +76,12 @@ namespace FixItRight_API.Extension
 					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
 				};
 			});
+		}
+
+		public static void ConfigureBlobService(this IServiceCollection services, IConfiguration configuration)
+		{
+			services.AddSingleton(u => new BlobServiceClient(configuration.GetConnectionString("StorageAccount")));
+			services.AddSingleton<IBlobService, BlobService>();
 		}
 	}
 }

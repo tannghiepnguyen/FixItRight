@@ -4,6 +4,7 @@ using FixItRight_Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FixItRight_Infrastructure.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20241129085955_MakeUpdateAtNullableInService")]
+    partial class MakeUpdateAtNullableInService
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -147,78 +150,6 @@ namespace FixItRight_Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Services");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("cd7bdc7f-6e90-46fc-a9a3-f5fab0169851"),
-                            Active = true,
-                            CreatedAt = new DateTime(2024, 11, 29, 22, 56, 10, 801, DateTimeKind.Local).AddTicks(9188),
-                            Description = "Fridge Repair",
-                            Image = "https://fixitright.blob.core.windows.net/fixitright/fridge.jpg",
-                            Name = "Fridge Repair",
-                            Price = 200000.0
-                        },
-                        new
-                        {
-                            Id = new Guid("85aa164a-a52c-4af3-95fd-29890f8df531"),
-                            Active = true,
-                            CreatedAt = new DateTime(2024, 11, 29, 22, 56, 10, 801, DateTimeKind.Local).AddTicks(9204),
-                            Description = "Air Condition Repair",
-                            Image = "https://fixitright.blob.core.windows.net/fixitright/aircondition.jpg",
-                            Name = "Air Condition Repair",
-                            Price = 200000.0
-                        },
-                        new
-                        {
-                            Id = new Guid("c3266aac-f1b7-4d4a-afb1-8bb2dae6bc8f"),
-                            Active = true,
-                            CreatedAt = new DateTime(2024, 11, 29, 22, 56, 10, 801, DateTimeKind.Local).AddTicks(9206),
-                            Description = "Washing Machine Repair",
-                            Image = "https://fixitright.blob.core.windows.net/fixitright/washing.jpg",
-                            Name = "Washing Machine Repair",
-                            Price = 200000.0
-                        },
-                        new
-                        {
-                            Id = new Guid("c9ff969c-4f3a-4c6c-877f-dd36f07189ed"),
-                            Active = true,
-                            CreatedAt = new DateTime(2024, 11, 29, 22, 56, 10, 801, DateTimeKind.Local).AddTicks(9208),
-                            Description = "TV Repair",
-                            Image = "https://fixitright.blob.core.windows.net/fixitright/tv.jpg",
-                            Name = "TV Repair",
-                            Price = 200000.0
-                        },
-                        new
-                        {
-                            Id = new Guid("a838bccb-7786-462f-b4b0-018b9ce03560"),
-                            Active = true,
-                            CreatedAt = new DateTime(2024, 11, 29, 22, 56, 10, 801, DateTimeKind.Local).AddTicks(9209),
-                            Description = "Microwave Repair",
-                            Image = "https://fixitright.blob.core.windows.net/fixitright/microwave.jpg",
-                            Name = "Microwave Repair",
-                            Price = 200000.0
-                        },
-                        new
-                        {
-                            Id = new Guid("8f19e546-a41d-488a-85df-558af0caf391"),
-                            Active = true,
-                            CreatedAt = new DateTime(2024, 11, 29, 22, 56, 10, 801, DateTimeKind.Local).AddTicks(9211),
-                            Description = "Oven Repair",
-                            Image = "https://fixitright.blob.core.windows.net/fixitright/oven.jpg",
-                            Name = "Oven Repair",
-                            Price = 200000.0
-                        },
-                        new
-                        {
-                            Id = new Guid("ccf59cf8-77d1-4f1e-82cc-42ee70dc0362"),
-                            Active = true,
-                            CreatedAt = new DateTime(2024, 11, 29, 22, 56, 10, 801, DateTimeKind.Local).AddTicks(9214),
-                            Description = "Dishwasher Repair",
-                            Image = "https://fixitright.blob.core.windows.net/fixitright/dishwasher.jpg",
-                            Name = "Dishwasher Repair",
-                            Price = 200000.0
-                        });
                 });
 
             modelBuilder.Entity("FixItRight_Domain.Models.Transaction", b =>

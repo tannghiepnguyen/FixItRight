@@ -15,6 +15,6 @@ namespace FixItRight_Infrastructure.Repositories
 		}
 		public IRepairServiceRepository RepairService => repairServiceRepository.Value;
 
-		public void Save() => repositoryContext.SaveChanges();
+		public Task SaveAsync() => repositoryContext.SaveChangesAsync();
 	}
 }
