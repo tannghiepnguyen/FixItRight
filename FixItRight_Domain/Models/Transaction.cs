@@ -7,5 +7,7 @@
 		public DateTime CreatedAt { get; set; }
 		public Guid BookingId { get; set; }
 		public Booking Booking { get; set; }
+		public string UserId { get; set; }
+		public User User { get; set; }
 	}
 }

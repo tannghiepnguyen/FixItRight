@@ -13,6 +13,7 @@ namespace FixItRight_Infrastructure.Configurations
 			builder.Property(t => t.Amount).IsRequired();
 			builder.Property(t => t.CreatedAt).IsRequired();
 			builder.HasOne(c => c.Booking).WithOne(c => c.Transaction).HasForeignKey<Transaction>(t => t.BookingId);
+			builder.HasOne(c => c.User).WithMany(c => c.Transactions).HasForeignKey(t => t.UserId).OnDelete(DeleteBehavior.NoAction);
 
 		}
 	}

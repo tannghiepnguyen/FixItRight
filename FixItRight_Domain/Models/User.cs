@@ -22,5 +22,6 @@ namespace FixItRight_Domain.Models
 		public ICollection<Chat> MechanistChats { get; set; }
 		public ICollection<Booking> CustomerBookings { get; set; }
 		public ICollection<Booking> MechanistBookings { get; set; }
+		public ICollection<Transaction> Transactions { get; set; }
 	}
 }

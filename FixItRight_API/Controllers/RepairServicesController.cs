@@ -16,6 +16,8 @@ namespace FixItRight_API.Controllers
 		}
 
 		[HttpGet]
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ServiceForReturnDto>))]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<IActionResult> GetRepairServicesAsync()
 		{
 			var services = await serviceManager.RepairServiceService.GetRepairServicesAsync(false);
@@ -23,6 +25,8 @@ namespace FixItRight_API.Controllers
 		}
 
 		[HttpGet("active")]
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ServiceForReturnDto>))]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<IActionResult> GetActiveRepairServicesAsync()
 		{
 			var services = await serviceManager.RepairServiceService.GetActiveRepairServicesAsync(false);
@@ -30,28 +34,37 @@ namespace FixItRight_API.Controllers
 		}
 
 		[HttpGet("{id:guid}")]
-		public async Task<IActionResult> GetRepairServiceByIdAsync(Guid id)
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ServiceForReturnDto))]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<IActionResult> GetRepairServiceByIdAsync([FromRoute] Guid id)
 		{
 			var service = await serviceManager.RepairServiceService.GetRepairServiceByIdAsync(id, false);
 			return Ok(service);
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> AddRepairServiceAsync(ServiceForCreationDto repairService)
+		[ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ServiceForReturnDto))]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public async Task<IActionResult> AddRepairServiceAsync([FromForm] ServiceForCreationDto repairService)
 		{
 			var service = await serviceManager.RepairServiceService.AddRepairServiceAsync(repairService);
 			return CreatedAtAction(nameof(GetRepairServiceByIdAsync), new { id = service.Id }, service);
 		}
 
 		[HttpPut("{id:guid}")]
-		public async Task<IActionResult> UpdateRepairServiceAsync(Guid id, ServiceForUpdateDto repairService)
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public async Task<IActionResult> UpdateRepairServiceAsync([FromRoute] Guid id, [FromForm] ServiceForUpdateDto repairService)
 		{
 			await serviceManager.RepairServiceService.UpdateRepairServiceAsync(id, repairService, true);
 			return NoContent();
 		}
 
 		[HttpDelete("{id:guid}")]
-		public async Task<IActionResult> DeleteRepairServiceAsync(Guid id)
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<IActionResult> DeleteRepairServiceAsync([FromRoute] Guid id)
 		{
 			await serviceManager.RepairServiceService.DeleteRepairServiceAsync(id, true);
 			return NoContent();
