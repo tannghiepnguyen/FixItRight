@@ -14,6 +14,7 @@ namespace FixItRight_Infrastructure.Configurations
 			builder.Property(c => c.CreatedAt).IsRequired();
 			builder.HasOne(c => c.Customer).WithMany(c => c.CustomerChats).HasForeignKey(c => c.CustomerId).OnDelete(DeleteBehavior.NoAction);
 			builder.HasOne(c => c.Mechanist).WithMany(c => c.MechanistChats).HasForeignKey(c => c.MechanistId).OnDelete(DeleteBehavior.NoAction);
+			builder.HasOne(c => c.Booking).WithMany(b => b.Chats).HasForeignKey(c => c.BookingId).OnDelete(DeleteBehavior.NoAction);
 		}
 	}
 }

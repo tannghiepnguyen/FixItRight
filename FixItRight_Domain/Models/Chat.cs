@@ -9,5 +9,7 @@
 		public User Customer { get; set; }
 		public string MechanistId { get; set; }
 		public User Mechanist { get; set; }
+		public Guid BookingId { get; set; }
+		public Booking Booking { get; set; }
 	}
 }

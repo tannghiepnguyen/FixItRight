@@ -18,6 +18,7 @@ namespace FixItRight_Infrastructure.Configurations
 			builder.Property(u => u.CccdBack);
 			builder.Property(u => u.CreatedAt).IsRequired();
 			builder.Property(u => u.UpdatedAt);
+			builder.Property(u => u.Address);
 			builder.HasMany(u => u.CustomerChats).WithOne(c => c.Customer).HasForeignKey(c => c.CustomerId).OnDelete(DeleteBehavior.NoAction);
 			builder.HasMany(u => u.MechanistChats).WithOne(c => c.Mechanist).HasForeignKey(c => c.MechanistId).OnDelete(DeleteBehavior.NoAction);
 			builder.HasMany(u => u.CustomerBookings).WithOne(b => b.Customer).HasForeignKey(b => b.CustomerId).OnDelete(DeleteBehavior.NoAction);

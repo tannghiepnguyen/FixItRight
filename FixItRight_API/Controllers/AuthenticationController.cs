@@ -1,4 +1,5 @@
-﻿using FixItRight_Service.IServices;
+﻿using FixItRight_Domain;
+using FixItRight_Service.IServices;
 using FixItRight_Service.UserServices.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,11 +22,12 @@ namespace FixItRight_API.Controllers
 			var result = await service.UserService.RegisterCustomer(userForRegistration);
 			if (!result.Succeeded)
 			{
+				CustomError customError = new CustomError();
 				foreach (var error in result.Errors)
 				{
-					ModelState.TryAddModelError(error.Code, error.Description);
+					customError.Errors.Add(error.Description);
 				}
-				return BadRequest(ModelState);
+				return BadRequest(customError);
 			}
 			return StatusCode(201);
 		}
