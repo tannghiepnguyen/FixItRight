@@ -18,8 +18,7 @@ namespace FixItRight_Domain.Models
 		public string? RefreshToken { get; set; }
 		public DateTime? RefreshTokenExpiryTime { get; set; }
 		public string? Address { get; set; }
-		public ICollection<Chat> CustomerChats { get; set; }
-		public ICollection<Chat> MechanistChats { get; set; }
+		public ICollection<Chat> Chats { get; set; }
 		public ICollection<Booking> CustomerBookings { get; set; }
 		public ICollection<Booking> MechanistBookings { get; set; }
 		public ICollection<Transaction> Transactions { get; set; }
