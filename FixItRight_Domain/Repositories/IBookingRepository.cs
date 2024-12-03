@@ -5,5 +5,6 @@ namespace FixItRight_Domain.Repositories
 	public interface IBookingRepository
 	{
 		Task<Booking?> GetBookingById(Guid bookingId, bool trackChange);
+		void CreateBooking(Booking booking);
 	}
 }

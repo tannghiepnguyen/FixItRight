@@ -11,6 +11,8 @@ namespace FixItRight_Infrastructure.Repositories
 		{
 		}
 
-		public async Task<Booking?> GetBookingById(Guid bookingId, bool trackChange) => await FindByCondition(booking => booking.Id.Equals(bookingId), trackChange).SingleOrDefaultAsync();
+		public void CreateBooking(Booking booking) => Create(booking);
+
+		public async Task<Booking?> GetBookingById(Guid bookingId, bool trackChange) => await FindByCondition(booking => booking.Id.Equals(bookingId), trackChange).Include(c => c.Rating).SingleOrDefaultAsync();
 	}
 }

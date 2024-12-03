@@ -7,7 +7,7 @@ using FixItRight_Service.RatingServices.DTOs;
 
 namespace FixItRight_Service.RatingServices
 {
-	public class RatingService : IRatingService
+	internal sealed class RatingService : IRatingService
 	{
 		private readonly IRepositoryManager repositoryManager;
 		private readonly ILoggerManager logger;

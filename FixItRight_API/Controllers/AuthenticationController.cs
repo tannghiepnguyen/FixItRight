@@ -25,8 +25,9 @@ namespace FixItRight_API.Controllers
 				CustomError customError = new CustomError();
 				foreach (var error in result.Errors)
 				{
-					customError.Errors.Add(error.Description);
+					customError.Errors.Add(error);
 				}
+				customError.Message = "Registration failed";
 				return BadRequest(customError);
 			}
 			return StatusCode(201);
@@ -38,11 +39,13 @@ namespace FixItRight_API.Controllers
 			var result = await service.UserService.RegisterMechanist(userForRegistration);
 			if (!result.Succeeded)
 			{
+				CustomError customError = new CustomError();
 				foreach (var error in result.Errors)
 				{
-					ModelState.TryAddModelError(error.Code, error.Description);
+					customError.Errors.Add(error);
 				}
-				return BadRequest(ModelState);
+				customError.Message = "Registration failed";
+				return BadRequest(customError);
 			}
 			return StatusCode(201);
 		}

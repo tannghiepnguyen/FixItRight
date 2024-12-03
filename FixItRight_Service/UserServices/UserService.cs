@@ -102,7 +102,7 @@ namespace FixItRight_Service.UserServices
 			{
 				new Claim(ClaimTypes.Name, user!.UserName!)
 			};
-			claims.Add(new Claim("Id", user.Id));
+			claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
 			claims.Add(new Claim("Fullname", user.Fullname));
 			var roles = await userManager.GetRolesAsync(user);
 			foreach (var role in roles)
