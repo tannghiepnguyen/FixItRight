@@ -49,7 +49,8 @@ namespace FixItRight_API.Extension
 				options.AddPolicy("CorsPolicy", builder =>
 					builder.AllowAnyOrigin()
 					.AllowAnyMethod()
-					.AllowAnyHeader());
+					.AllowAnyHeader()
+					.WithExposedHeaders("X-Pagination"));
 			});
 
 		public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)

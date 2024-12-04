@@ -1,4 +1,5 @@
-﻿using FixItRight_Service.UserServices.DTOs;
+﻿using FixItRight_Domain.RequestFeatures;
+using FixItRight_Service.UserServices.DTOs;
 using Microsoft.AspNetCore.Identity;
 
 namespace FixItRight_Service.UserServices
@@ -11,5 +12,10 @@ namespace FixItRight_Service.UserServices
 		Task<TokenDto> CreateToken(bool populateExp);
 		Task<TokenDto> RefreshToken(TokenDto tokenDto);
 		Task<UserForReturnDto> GetUserById(string userId);
+		Task<UserForReturnDto> GetUserByToken(string token);
+		Task<(IEnumerable<UserForReturnDto> users, MetaData metaData)> GetUsers(UserParameters userParameters);
+		Task<IdentityResult> UpdateUser(string userId, UserForUpdateDto userForUpdate);
+		Task<IdentityResult> DeleteUser(string userId);
+		Task<IdentityResult> VerifyUser(string userId);
 	}
 }

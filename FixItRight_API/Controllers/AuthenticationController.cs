@@ -1,6 +1,7 @@
 ﻿using FixItRight_Domain;
 using FixItRight_Service.IServices;
 using FixItRight_Service.UserServices.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FixItRight_API.Controllers
@@ -61,10 +62,19 @@ namespace FixItRight_API.Controllers
 		}
 
 		[HttpPost("refresh")]
+		[Authorize]
 		public async Task<IActionResult> Refresh([FromForm] TokenDto tokenDto)
 		{
 			var tokenDtoToReturn = await service.UserService.RefreshToken(tokenDto);
 			return Ok(tokenDtoToReturn);
+		}
+
+		[HttpGet("current-user")]
+		[Authorize]
+		public async Task<IActionResult> GetUserByToken([FromHeader] string token)
+		{
+			var user = await service.UserService.GetUserByToken(token);
+			return Ok(user);
 		}
 	}
 }
