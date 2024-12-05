@@ -1,10 +1,14 @@
 ﻿using AutoMapper;
+using FixItRight_Domain.Constants;
 using FixItRight_Domain.Exceptions;
 using FixItRight_Domain.Models;
 using FixItRight_Domain.Repositories;
 using FixItRight_Service.IServices;
 using FixItRight_Service.TransactionServices.DTOs;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace FixItRight_Service.TransactionServices
 {
@@ -14,13 +18,17 @@ namespace FixItRight_Service.TransactionServices
 		private readonly ILoggerManager logger;
 		private readonly IMapper mapper;
 		private readonly UserManager<User> userManager;
+		private readonly Utils utils;
+		private readonly IConfiguration configuration;
 
-		public TransactionService(IRepositoryManager repositoryManager, ILoggerManager logger, IMapper mapper, UserManager<User> userManager)
+		public TransactionService(IRepositoryManager repositoryManager, ILoggerManager logger, IMapper mapper, UserManager<User> userManager, Utils utils, IConfiguration configuration)
 		{
 			this.repositoryManager = repositoryManager;
 			this.logger = logger;
 			this.mapper = mapper;
 			this.userManager = userManager;
+			this.utils = utils;
+			this.configuration = configuration;
 		}
 
 		private async Task<Booking> CheckBookingExist(Guid bookingId, bool trackChange)
@@ -36,13 +44,29 @@ namespace FixItRight_Service.TransactionServices
 			if (user is null) throw new UserNotFoundException(userId);
 		}
 
-		public async Task<TransactionForReturnDto> CreateTransaction(TransactionForCreationDto transaction)
+		public async Task<string> CreateTransaction(TransactionForCreationDto transactionDto)
 		{
-			var transactionEntity = mapper.Map<Transaction>(transaction);
-			transactionEntity.CreatedAt = DateTime.Now;
-			repositoryManager.TransactionRepository.CreateTransaction(transactionEntity);
+			var transaction = mapper.Map<Transaction>(transactionDto);
+			transaction.CreatedAt = DateTime.Now;
+			transaction.Status = TransactionStatus.Pending;
+			repositoryManager.TransactionRepository.CreateTransaction(transaction);
 			await repositoryManager.SaveAsync();
-			return mapper.Map<TransactionForReturnDto>(transactionEntity);
+
+			var vnpay = new VnPayLibrary();
+			vnpay.AddRequestData("vnp_Version", "2.1.0");
+			vnpay.AddRequestData("vnp_Command", "pay");
+			vnpay.AddRequestData("vnp_TmnCode", configuration.GetSection("VNPay").GetSection("TmnCode").Value);
+			vnpay.AddRequestData("vnp_Amount", (transactionDto.Amount * 100).ToString());
+			vnpay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
+			vnpay.AddRequestData("vnp_CurrCode", "VND");
+			vnpay.AddRequestData("vnp_IpAddr", utils.GetIpAddress());
+			vnpay.AddRequestData("vnp_Locale", "vn");
+			vnpay.AddRequestData("vnp_OrderType", "other");
+			vnpay.AddRequestData("vnp_OrderInfo", $"Payment for order {transaction.Id}");
+			vnpay.AddRequestData("vnp_ReturnUrl", configuration.GetSection("VNPay").GetSection("ReturnUrlWeb").Value);
+			vnpay.AddRequestData("vnp_TxnRef", transaction.Id.ToString());
+			var paymentUrl = vnpay.CreateRequestUrl(configuration.GetSection("VNPay").GetSection("Url").Value, configuration.GetSection("VNPay").GetSection("HashSecret").Value);
+			return paymentUrl; // Redirect to this URL for payment
 		}
 
 		public async Task<TransactionForReturnDto?> GetTransactionByBookingId(Guid bookingId, bool trackChange)
@@ -62,6 +86,50 @@ namespace FixItRight_Service.TransactionServices
 		{
 			var transactions = await repositoryManager.TransactionRepository.GetTransactions(trackChange);
 			return mapper.Map<IEnumerable<TransactionForReturnDto>>(transactions);
+		}
+
+		public async Task<IActionResult> IPNAsync(IQueryCollection query)
+		{
+			var vnpay = new VnPayLibrary();
+			foreach (var key in query.Keys)
+			{
+				if (key.StartsWith("vnp_"))
+				{
+					vnpay.AddResponseData(key, query[key]);
+				}
+			}
+
+			var vnpSecureHash = query["vnp_SecureHash"];
+			var isValid = vnpay.ValidateSignature(vnpSecureHash, configuration.GetSection("VNPay").GetSection("HashSecret").Value);
+
+			if (!isValid)
+			{
+				return new JsonResult(new { RspCode = "97", Message = "Invalid signature" });
+			}
+
+			// Validate and update transaction status
+			var transactionId = Guid.Parse(vnpay.GetResponseData("vnp_TxnRef"));
+			var amount = long.Parse(vnpay.GetResponseData("vnp_Amount")) / 100;
+			var responseCode = vnpay.GetResponseData("vnp_ResponseCode");
+			var transaction = await repositoryManager.TransactionRepository.GetTransactionById(transactionId, true);
+
+			if (transaction == null)
+			{
+				return new JsonResult(new { RspCode = "01", Message = "Order not found" });
+			}
+
+			// Update transaction status based on response code
+			if (responseCode == "00")
+			{
+				transaction.Status = TransactionStatus.Success;
+			}
+			else
+			{
+				transaction.Status = TransactionStatus.Failed;
+			}
+			await repositoryManager.SaveAsync();
+
+			return new JsonResult(new { RspCode = "00", Message = "Confirm Success" });
 		}
 	}
 }

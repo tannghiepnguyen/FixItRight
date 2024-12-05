@@ -19,31 +19,45 @@ namespace FixItRight_API.Controllers
 		public async Task<IActionResult> GetTransactionByBookingId([FromRoute] Guid bookingId)
 		{
 			var transaction = await serviceManager.TransactionService.GetTransactionByBookingId(bookingId, false);
-			return Ok(transaction);
+			return Ok(new
+			{
+				data = transaction
+			});
 		}
 
 		[HttpGet("{userId}")]
 		public async Task<IActionResult> GetTransactionsByUserId([FromRoute] string userId)
 		{
 			var transactions = await serviceManager.TransactionService.GetTransactionsByUserId(userId, false);
-			return Ok(transactions);
+			return Ok(new
+			{
+				data = transactions
+			});
 		}
 
 		[HttpGet]
 		public async Task<IActionResult> GetAllTransactions()
 		{
 			var transactions = await serviceManager.TransactionService.GetTransactions(false);
-			return Ok(transactions);
+			return Ok(new
+			{
+				data = transactions
+			});
 		}
 
 		[HttpPost]
 		public async Task<IActionResult> CreateTransaction([FromForm] TransactionForCreationDto transaction)
 		{
-			var createdTransaction = await serviceManager.TransactionService.CreateTransaction(transaction);
-			return CreatedAtAction(nameof(GetTransactionByBookingId), new { bookingId = createdTransaction.BookingId }, createdTransaction);
+			var paymentUrl = await serviceManager.TransactionService.CreateTransaction(transaction);
+			return Ok(new { PaymentUrl = paymentUrl });
 		}
 
-
+		[HttpGet("IPN")]
+		public async Task<IActionResult> IPN()
+		{
+			var result = await serviceManager.TransactionService.IPNAsync(Request.Query);
+			return Ok(result);
+		}
 
 	}
 }

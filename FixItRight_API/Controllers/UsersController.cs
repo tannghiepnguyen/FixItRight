@@ -24,7 +24,10 @@ namespace FixItRight_API.Controllers
 		public async Task<IActionResult> GetUserById(string id)
 		{
 			var user = await service.UserService.GetUserById(id);
-			return Ok(user);
+			return Ok(new
+			{
+				data = user
+			});
 		}
 
 		[HttpGet]
@@ -33,7 +36,10 @@ namespace FixItRight_API.Controllers
 		{
 			var pagedResult = await service.UserService.GetUsers(userParameters);
 			Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagedResult.metaData));
-			return Ok(pagedResult.users);
+			return Ok(new
+			{
+				data = pagedResult.users
+			});
 		}
 
 		[HttpPut("{id}")]

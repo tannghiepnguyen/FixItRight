@@ -58,7 +58,10 @@ namespace FixItRight_API.Controllers
 				return Unauthorized();
 
 			var tokenDto = await service.UserService.CreateToken(populateExp: true);
-			return Ok(tokenDto);
+			return Ok(new
+			{
+				data = tokenDto
+			});
 		}
 
 		[HttpPost("refresh")]
@@ -66,7 +69,10 @@ namespace FixItRight_API.Controllers
 		public async Task<IActionResult> Refresh([FromForm] TokenDto tokenDto)
 		{
 			var tokenDtoToReturn = await service.UserService.RefreshToken(tokenDto);
-			return Ok(tokenDtoToReturn);
+			return Ok(new
+			{
+				data = tokenDtoToReturn
+			});
 		}
 
 		[HttpGet("current-user")]
@@ -74,7 +80,10 @@ namespace FixItRight_API.Controllers
 		public async Task<IActionResult> GetUserByToken([FromHeader] string token)
 		{
 			var user = await service.UserService.GetUserByToken(token);
-			return Ok(user);
+			return Ok(new
+			{
+				data = user
+			});
 		}
 	}
 }

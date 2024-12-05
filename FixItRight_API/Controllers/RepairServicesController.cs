@@ -21,7 +21,10 @@ namespace FixItRight_API.Controllers
 		public async Task<IActionResult> GetRepairServicesAsync()
 		{
 			var services = await serviceManager.RepairServiceService.GetRepairServicesAsync(false);
-			return Ok(services);
+			return Ok(new
+			{
+				data = services
+			});
 		}
 
 		[HttpGet("active")]
@@ -30,7 +33,10 @@ namespace FixItRight_API.Controllers
 		public async Task<IActionResult> GetActiveRepairServicesAsync()
 		{
 			var services = await serviceManager.RepairServiceService.GetActiveRepairServicesAsync(false);
-			return Ok(services);
+			return Ok(new
+			{
+				data = services
+			});
 		}
 
 		[HttpGet("{id:guid}")]
@@ -39,7 +45,10 @@ namespace FixItRight_API.Controllers
 		public async Task<IActionResult> GetRepairServiceByIdAsync([FromRoute] Guid id)
 		{
 			var service = await serviceManager.RepairServiceService.GetRepairServiceByIdAsync(id, false);
-			return Ok(service);
+			return Ok(new
+			{
+				data = service
+			});
 		}
 
 		[HttpPost]

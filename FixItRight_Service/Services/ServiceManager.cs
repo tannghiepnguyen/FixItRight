@@ -19,13 +19,13 @@ namespace FixItRight_Service.Services
 		private readonly Lazy<IRatingService> ratingService;
 		private readonly Lazy<IBookingService> bookingService;
 		private readonly Lazy<ITransactionService> transactionService;
-		public ServiceManager(IRepositoryManager repositoryManager, ILoggerManager logger, IMapper mapper, UserManager<User> userManager, IConfiguration configuration, IBlobService blobService)
+		public ServiceManager(IRepositoryManager repositoryManager, ILoggerManager logger, IMapper mapper, UserManager<User> userManager, IConfiguration configuration, IBlobService blobService, Utils utils)
 		{
 			userService = new Lazy<IUserService>(() => new UserService(logger, mapper, userManager, configuration, blobService));
 			repairServiceService = new Lazy<IRepairServiceService>(() => new RepairServiceService(repositoryManager, logger, mapper));
 			ratingService = new Lazy<IRatingService>(() => new RatingService(repositoryManager, logger, mapper));
 			bookingService = new Lazy<IBookingService>(() => new BookingService(repositoryManager, logger, mapper));
-			transactionService = new Lazy<ITransactionService>(() => new TransactionService(repositoryManager, logger, mapper, userManager));
+			transactionService = new Lazy<ITransactionService>(() => new TransactionService(repositoryManager, logger, mapper, userManager, utils, configuration));
 		}
 		public IUserService UserService => userService.Value;
 

@@ -19,7 +19,10 @@ namespace FixItRight_API.Controllers
 		public async Task<IActionResult> GetRatingByBookingId([FromRoute] Guid bookingId)
 		{
 			var ratings = await serviceManager.RatingService.GetRatingByBookingId(bookingId, false);
-			return Ok(ratings);
+			return Ok(new
+			{
+				data = ratings
+			});
 		}
 
 		[HttpPost]

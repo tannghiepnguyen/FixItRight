@@ -10,6 +10,7 @@ namespace FixItRight_Infrastructure.Repositories
 		private readonly Lazy<IRatingRepository> ratingRepository;
 		private readonly Lazy<IBookingRepository> bookingRepository;
 		private readonly Lazy<ITransactionRepository> transactionRepository;
+		private readonly Lazy<IChatRepository> chatRepository;
 
 		public RepositoryManager(RepositoryContext repositoryContext)
 		{
@@ -18,6 +19,7 @@ namespace FixItRight_Infrastructure.Repositories
 			this.ratingRepository = new Lazy<IRatingRepository>(() => new RatingRepository(this.repositoryContext));
 			this.bookingRepository = new Lazy<IBookingRepository>(() => new BookingRepository(this.repositoryContext));
 			this.transactionRepository = new Lazy<ITransactionRepository>(() => new TransactionRepository(this.repositoryContext));
+			this.chatRepository = new Lazy<IChatRepository>(() => new ChatRepository(this.repositoryContext));
 		}
 		public IRepairServiceRepository RepairService => repairServiceRepository.Value;
 
@@ -26,6 +28,8 @@ namespace FixItRight_Infrastructure.Repositories
 		public IBookingRepository BookingRepository => bookingRepository.Value;
 
 		public ITransactionRepository TransactionRepository => transactionRepository.Value;
+
+		public IChatRepository ChatRepository => chatRepository.Value;
 
 		public Task SaveAsync() => repositoryContext.SaveChangesAsync();
 	}

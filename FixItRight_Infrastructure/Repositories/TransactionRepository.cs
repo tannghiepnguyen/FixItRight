@@ -18,5 +18,7 @@ namespace FixItRight_Infrastructure.Repositories
 		public async Task<IEnumerable<Transaction>> GetTransactionsByUserId(string userId, bool trackChange) => await FindByCondition(transaction => transaction.UserId.Equals(userId), trackChange).ToListAsync();
 
 		public async Task<IEnumerable<Transaction>> GetTransactions(bool trackChange) => await FindAll(trackChange).ToListAsync();
+
+		public async Task<Transaction?> GetTransactionById(Guid id, bool trackChange) => await FindByCondition(transaction => transaction.Id.Equals(id), trackChange).SingleOrDefaultAsync();
 	}
 }

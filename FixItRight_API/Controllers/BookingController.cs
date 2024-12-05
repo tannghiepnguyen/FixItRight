@@ -21,7 +21,10 @@ namespace FixItRight_API.Controllers
 		public async Task<IActionResult> GetBookings(Guid id)
 		{
 			var bookings = await serviceManager.BookingService.GetBookingById(id, false);
-			return Ok(bookings);
+			return Ok(new
+			{
+				data = bookings
+			});
 		}
 
 		[HttpPost]

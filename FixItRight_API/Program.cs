@@ -1,6 +1,7 @@
 using FixItRight_API;
 using FixItRight_API.Extension;
 using FixItRight_Service.Extensions;
+using FixItRight_Service.TransactionServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -57,6 +58,8 @@ builder.Services.ConfigureAutomapper();
 builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.ConfigureBlobService(builder.Configuration);
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<Utils>();
 builder.Host.UseSerilog((hostContext, configuration) =>
 {
 	configuration.ReadFrom.Configuration(hostContext.Configuration);
