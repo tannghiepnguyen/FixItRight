@@ -1,5 +1,6 @@
 using FixItRight_API;
 using FixItRight_API.Extension;
+using FixItRight_Service.ChatServices;
 using FixItRight_Service.Extensions;
 using FixItRight_Service.TransactionServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -60,6 +61,7 @@ builder.Services.ConfigureBlobService(builder.Configuration);
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<Utils>();
+builder.Services.AddSignalR();
 builder.Host.UseSerilog((hostContext, configuration) =>
 {
 	configuration.ReadFrom.Configuration(hostContext.Configuration);
@@ -84,5 +86,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<MessageHub>("/message");
 
 app.Run();
