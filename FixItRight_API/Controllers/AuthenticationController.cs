@@ -77,8 +77,9 @@ namespace FixItRight_API.Controllers
 
 		[HttpGet("current-user")]
 		[Authorize]
-		public async Task<IActionResult> GetUserByToken([FromHeader] string token)
+		public async Task<IActionResult> GetUserByToken()
 		{
+			var token = HttpContext.Request.Headers["Authorization"].ToString().Split(" ")[1];
 			var user = await service.UserService.GetUserByToken(token);
 			return Ok(new
 			{
