@@ -1,4 +1,5 @@
 ﻿using FixItRight_Domain.Models;
+using FixItRight_Domain.RequestFeatures;
 
 namespace FixItRight_Domain.Repositories
 {
@@ -6,8 +7,8 @@ namespace FixItRight_Domain.Repositories
 	{
 		Task<Transaction?> GetTransactionByBookingId(Guid bookingId, bool trackChange);
 		Task<Transaction?> GetTransactionById(Guid id, bool trackChange);
-		Task<IEnumerable<Transaction>> GetTransactionsByUserId(string userId, bool trackChange);
-		Task<IEnumerable<Transaction>> GetTransactions(bool trackChange);
+		Task<PagedList<Transaction>> GetTransactionsByUserId(string userId, TransactionParameters transactionParameters, bool trackChange);
+		Task<PagedList<Transaction>> GetTransactions(TransactionParameters transactionParameters, bool trackChange);
 		void CreateTransaction(Transaction transaction);
 
 	}

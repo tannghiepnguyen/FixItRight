@@ -6,5 +6,6 @@ namespace FixItRight_Service.RatingServices
 	{
 		Task<RatingForReturnDto> CreateRating(RatingForCreationDto ratingForCreationDto);
 		Task<RatingForReturnDto> GetRatingByBookingId(Guid bookingId, bool trackChange);
+		Task<IEnumerable<RatingForReturnDto>> GetRatings(bool trackChange);
 	}
 }

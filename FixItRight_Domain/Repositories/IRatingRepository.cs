@@ -6,5 +6,6 @@ namespace FixItRight_Domain.Repositories
 	{
 		void CreateRating(Rating rating);
 		Task<Rating?> GetRatingByBookingId(Guid bookingId, bool trackChange);
+		Task<IEnumerable<Rating>> GetRatings(bool trackChange);
 	}
 }

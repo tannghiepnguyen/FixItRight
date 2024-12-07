@@ -49,5 +49,11 @@ namespace FixItRight_Service.BookingServices
 			mapper.Map(bookingForUpdateDto, booking);
 			await repositoryManager.SaveAsync();
 		}
+
+		public async Task<IEnumerable<BookingForReturnDto>> GetBookings(bool trackChange)
+		{
+			var bookings = await repositoryManager.BookingRepository.GetBookings(trackChange);
+			return mapper.Map<IEnumerable<BookingForReturnDto>>(bookings);
+		}
 	}
 }

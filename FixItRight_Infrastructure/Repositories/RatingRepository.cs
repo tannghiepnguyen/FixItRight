@@ -13,7 +13,8 @@ namespace FixItRight_Infrastructure.Repositories
 
 		public void CreateRating(Rating rating) => Create(rating);
 
-		public Task<Rating?> GetRatingByBookingId(Guid bookingId, bool trackChange) => FindByCondition(r => r.BookingId.Equals(bookingId), trackChange)
-			.SingleOrDefaultAsync();
+		public async Task<Rating?> GetRatingByBookingId(Guid bookingId, bool trackChange) => await FindByCondition(r => r.BookingId.Equals(bookingId), trackChange).SingleOrDefaultAsync();
+
+		public async Task<IEnumerable<Rating>> GetRatings(bool trackChange) => await FindAll(trackChange).ToListAsync();
 	}
 }

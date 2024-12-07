@@ -3,6 +3,7 @@ using FixItRight_Domain.Constants;
 using FixItRight_Domain.Exceptions;
 using FixItRight_Domain.Models;
 using FixItRight_Domain.Repositories;
+using FixItRight_Domain.RequestFeatures;
 using FixItRight_Service.IServices;
 using FixItRight_Service.TransactionServices.DTOs;
 using Microsoft.AspNetCore.Http;
@@ -75,17 +76,19 @@ namespace FixItRight_Service.TransactionServices
 			return mapper.Map<TransactionForReturnDto>(transaction);
 		}
 
-		public async Task<IEnumerable<TransactionForReturnDto>> GetTransactionsByUserId(string userId, bool trackChange)
+		public async Task<(IEnumerable<TransactionForReturnDto> transactions, MetaData metaData)> GetTransactionsByUserId(string userId, TransactionParameters transactionParameters, bool trackChange)
 		{
 			await CheckUserExist(userId);
-			var transactions = await repositoryManager.TransactionRepository.GetTransactionsByUserId(userId, trackChange);
-			return mapper.Map<IEnumerable<TransactionForReturnDto>>(transactions);
+			var transactionsWithMetaData = await repositoryManager.TransactionRepository.GetTransactionsByUserId(userId, transactionParameters, trackChange);
+			var transactions = mapper.Map<IEnumerable<TransactionForReturnDto>>(transactionsWithMetaData);
+			return (transactions, transactionsWithMetaData.MetaData);
 		}
 
-		public async Task<IEnumerable<TransactionForReturnDto>> GetTransactions(bool trackChange)
+		public async Task<(IEnumerable<TransactionForReturnDto> transactions, MetaData metaData)> GetTransactions(TransactionParameters transactionParameters, bool trackChange)
 		{
-			var transactions = await repositoryManager.TransactionRepository.GetTransactions(trackChange);
-			return mapper.Map<IEnumerable<TransactionForReturnDto>>(transactions);
+			var transactionsWithMetaData = await repositoryManager.TransactionRepository.GetTransactions(transactionParameters, trackChange);
+			var transactions = mapper.Map<IEnumerable<TransactionForReturnDto>>(transactionsWithMetaData);
+			return (transactions, transactionsWithMetaData.MetaData);
 		}
 
 		public async Task<IActionResult> IPNAsync(IQueryCollection query)

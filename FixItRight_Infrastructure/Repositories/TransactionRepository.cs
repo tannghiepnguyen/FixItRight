@@ -1,5 +1,6 @@
 ﻿using FixItRight_Domain.Models;
 using FixItRight_Domain.Repositories;
+using FixItRight_Domain.RequestFeatures;
 using FixItRight_Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,9 +16,17 @@ namespace FixItRight_Infrastructure.Repositories
 
 		public async Task<Transaction?> GetTransactionByBookingId(Guid bookingId, bool trackChange) => await FindByCondition(transaction => transaction.BookingId.Equals(bookingId), trackChange).SingleOrDefaultAsync();
 
-		public async Task<IEnumerable<Transaction>> GetTransactionsByUserId(string userId, bool trackChange) => await FindByCondition(transaction => transaction.UserId.Equals(userId), trackChange).ToListAsync();
+		public async Task<PagedList<Transaction>> GetTransactionsByUserId(string userId, TransactionParameters transactionParameters, bool trackChange)
+		{
+			var transactions = await FindByCondition(transaction => transaction.UserId.Equals(userId), trackChange).OrderBy(c => c.CreatedAt).ToListAsync();
+			return PagedList<Transaction>.ToPagedList(transactions, transactionParameters.PageNumber, transactionParameters.PageSize);
+		}
 
-		public async Task<IEnumerable<Transaction>> GetTransactions(bool trackChange) => await FindAll(trackChange).ToListAsync();
+		public async Task<PagedList<Transaction>> GetTransactions(TransactionParameters transactionParameters, bool trackChange)
+		{
+			var transactions = await FindAll(trackChange).OrderBy(c => c.CreatedAt).ToListAsync();
+			return PagedList<Transaction>.ToPagedList(transactions, transactionParameters.PageNumber, transactionParameters.PageSize);
+		}
 
 		public async Task<Transaction?> GetTransactionById(Guid id, bool trackChange) => await FindByCondition(transaction => transaction.Id.Equals(id), trackChange).SingleOrDefaultAsync();
 	}

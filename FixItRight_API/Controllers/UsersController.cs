@@ -20,6 +20,7 @@ namespace FixItRight_API.Controllers
 		}
 
 		[HttpGet("{id}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize]
 		public async Task<IActionResult> GetUserById(string id)
 		{
@@ -30,7 +31,8 @@ namespace FixItRight_API.Controllers
 			});
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Roles = $"{nameof(Role.Admin)}")]
 		public async Task<IActionResult> GetUsers([FromQuery] UserParameters userParameters)
 		{
@@ -43,6 +45,7 @@ namespace FixItRight_API.Controllers
 		}
 
 		[HttpPut("{id}")]
+		[ProducesResponseType(StatusCodes.Status201Created)]
 		[Authorize]
 		public async Task<IActionResult> UpdateUser(string id, UserForUpdateDto userForUpdate)
 		{
@@ -51,6 +54,7 @@ namespace FixItRight_API.Controllers
 		}
 
 		[HttpDelete("{id}")]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[Authorize]
 		public async Task<IActionResult> DeleteUser(string id)
 		{
@@ -59,6 +63,7 @@ namespace FixItRight_API.Controllers
 		}
 
 		[HttpPut("{id}/verify")]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[Authorize(Roles = $"{nameof(Role.Admin)}")]
 		public async Task<IActionResult> VerifyUser(string id)
 		{

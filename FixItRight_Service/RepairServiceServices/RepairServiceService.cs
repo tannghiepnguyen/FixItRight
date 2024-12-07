@@ -2,6 +2,7 @@
 using FixItRight_Domain.Exceptions;
 using FixItRight_Domain.Models;
 using FixItRight_Domain.Repositories;
+using FixItRight_Domain.RequestFeatures;
 using FixItRight_Service.IServices;
 using FixItRight_Service.RepairServiceServices.DTOs;
 
@@ -42,10 +43,11 @@ namespace FixItRight_Service.RepairServiceServices
 			await repositoryManager.SaveAsync();
 		}
 
-		public async Task<IEnumerable<ServiceForReturnDto>> GetActiveRepairServicesAsync(bool trackChange)
+		public async Task<(IEnumerable<ServiceForReturnDto> services, MetaData metaData)> GetActiveRepairServicesAsync(RepairServiceParameters repairServiceParameters, bool trackChange)
 		{
-			var services = await repositoryManager.RepairService.GetActiveRepairServicesAsync(trackChange);
-			return mapper.Map<IEnumerable<ServiceForReturnDto>>(services);
+			var servicesWithMetaData = await repositoryManager.RepairService.GetActiveRepairServicesAsync(repairServiceParameters, trackChange);
+			var services = mapper.Map<IEnumerable<ServiceForReturnDto>>(servicesWithMetaData);
+			return (services, servicesWithMetaData.MetaData);
 		}
 
 		public async Task<ServiceForReturnDto?> GetRepairServiceByIdAsync(Guid id, bool trackChange)
@@ -54,10 +56,11 @@ namespace FixItRight_Service.RepairServiceServices
 			return mapper.Map<ServiceForReturnDto>(service);
 		}
 
-		public async Task<IEnumerable<ServiceForReturnDto>> GetRepairServicesAsync(bool trackChange)
+		public async Task<(IEnumerable<ServiceForReturnDto> services, MetaData metaData)> GetRepairServicesAsync(RepairServiceParameters repairServiceParameters, bool trackChange)
 		{
-			var services = await repositoryManager.RepairService.GetRepairServicesAsync(trackChange);
-			return mapper.Map<IEnumerable<ServiceForReturnDto>>(services);
+			var servicesWithMetaData = await repositoryManager.RepairService.GetRepairServicesAsync(repairServiceParameters, trackChange);
+			var services = mapper.Map<IEnumerable<ServiceForReturnDto>>(servicesWithMetaData);
+			return (services, servicesWithMetaData.MetaData);
 		}
 
 		public async Task UpdateRepairServiceAsync(Guid id, ServiceForUpdateDto repairService, bool trackChange)

@@ -40,5 +40,11 @@ namespace FixItRight_Service.RatingServices
 			var booking = await CheckBookingExist(bookingId, trackChange);
 			return mapper.Map<RatingForReturnDto>(booking.Rating);
 		}
+
+		public async Task<IEnumerable<RatingForReturnDto>> GetRatings(bool trackChange)
+		{
+			var ratings = await repositoryManager.RatingRepository.GetRatings(trackChange);
+			return mapper.Map<IEnumerable<RatingForReturnDto>>(ratings);
+		}
 	}
 }
