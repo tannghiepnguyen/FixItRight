@@ -1,8 +1,10 @@
 ﻿using FixItRight_Domain.Constants;
+using FixItRight_Domain.RequestFeatures;
 using FixItRight_Service.BookingServices.DTOs;
 using FixItRight_Service.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace FixItRight_API.Controllers
 {
@@ -20,12 +22,13 @@ namespace FixItRight_API.Controllers
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Roles = $"{nameof(Role.Admin)}")]
-		public async Task<IActionResult> GetBookings()
+		public async Task<IActionResult> GetBookings([FromQuery] BookingParameters bookingParameters)
 		{
-			var bookings = await serviceManager.BookingService.GetBookings(false);
+			var pagedResult = await serviceManager.BookingService.GetBookings(bookingParameters, false);
+			Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagedResult.metaData));
 			return Ok(new
 			{
-				data = bookings
+				data = pagedResult.bookings
 			});
 		}
 

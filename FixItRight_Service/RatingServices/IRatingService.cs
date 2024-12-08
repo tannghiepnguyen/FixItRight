@@ -1,4 +1,5 @@
-﻿using FixItRight_Service.RatingServices.DTOs;
+﻿using FixItRight_Domain.RequestFeatures;
+using FixItRight_Service.RatingServices.DTOs;
 
 namespace FixItRight_Service.RatingServices
 {
@@ -6,6 +7,6 @@ namespace FixItRight_Service.RatingServices
 	{
 		Task<RatingForReturnDto> CreateRating(RatingForCreationDto ratingForCreationDto);
 		Task<RatingForReturnDto> GetRatingByBookingId(Guid bookingId, bool trackChange);
-		Task<IEnumerable<RatingForReturnDto>> GetRatings(bool trackChange);
+		Task<(IEnumerable<RatingForReturnDto> ratings, MetaData metaData)> GetRatings(RatingParameters ratingParameters, bool trackChange);
 	}
 }

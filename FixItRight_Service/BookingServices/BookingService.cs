@@ -3,6 +3,7 @@ using FixItRight_Domain.Constants;
 using FixItRight_Domain.Exceptions;
 using FixItRight_Domain.Models;
 using FixItRight_Domain.Repositories;
+using FixItRight_Domain.RequestFeatures;
 using FixItRight_Service.BookingServices.DTOs;
 using FixItRight_Service.IServices;
 
@@ -50,10 +51,11 @@ namespace FixItRight_Service.BookingServices
 			await repositoryManager.SaveAsync();
 		}
 
-		public async Task<IEnumerable<BookingForReturnDto>> GetBookings(bool trackChange)
+		public async Task<(IEnumerable<BookingForReturnDto> bookings, MetaData metaData)> GetBookings(BookingParameters bookingParameters, bool trackChange)
 		{
-			var bookings = await repositoryManager.BookingRepository.GetBookings(trackChange);
-			return mapper.Map<IEnumerable<BookingForReturnDto>>(bookings);
+			var bookingsWithMetaData = await repositoryManager.BookingRepository.GetBookings(bookingParameters, trackChange);
+			var bookings = mapper.Map<IEnumerable<BookingForReturnDto>>(bookingsWithMetaData);
+			return (bookings, bookingsWithMetaData.MetaData);
 		}
 	}
 }

@@ -2,6 +2,7 @@
 using FixItRight_Domain.Exceptions;
 using FixItRight_Domain.Models;
 using FixItRight_Domain.Repositories;
+using FixItRight_Domain.RequestFeatures;
 using FixItRight_Service.IServices;
 using FixItRight_Service.RatingServices.DTOs;
 
@@ -41,10 +42,11 @@ namespace FixItRight_Service.RatingServices
 			return mapper.Map<RatingForReturnDto>(booking.Rating);
 		}
 
-		public async Task<IEnumerable<RatingForReturnDto>> GetRatings(bool trackChange)
+		public async Task<(IEnumerable<RatingForReturnDto> ratings, MetaData metaData)> GetRatings(RatingParameters ratingParameters, bool trackChange)
 		{
-			var ratings = await repositoryManager.RatingRepository.GetRatings(trackChange);
-			return mapper.Map<IEnumerable<RatingForReturnDto>>(ratings);
+			var ratingsWithMetaData = await repositoryManager.RatingRepository.GetRatings(ratingParameters, trackChange);
+			var ratings = mapper.Map<IEnumerable<RatingForReturnDto>>(ratingsWithMetaData);
+			return (ratings, ratingsWithMetaData.MetaData);
 		}
 	}
 }

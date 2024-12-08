@@ -1,8 +1,10 @@
 ﻿using FixItRight_Domain.Constants;
+using FixItRight_Domain.RequestFeatures;
 using FixItRight_Service.IServices;
 using FixItRight_Service.RatingServices.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace FixItRight_API.Controllers
 {
@@ -42,12 +44,13 @@ namespace FixItRight_API.Controllers
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<RatingForReturnDto>))]
 		[Authorize(Roles = $"{nameof(Role.Admin)}")]
-		public async Task<IActionResult> GetRatings()
+		public async Task<IActionResult> GetRatings([FromQuery] RatingParameters ratingParameters)
 		{
-			var ratings = await serviceManager.RatingService.GetRatings(false);
+			var pagedResult = await serviceManager.RatingService.GetRatings(ratingParameters, false);
+			Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagedResult.metaData));
 			return Ok(new
 			{
-				data = ratings
+				data = pagedResult.ratings
 			});
 		}
 	}

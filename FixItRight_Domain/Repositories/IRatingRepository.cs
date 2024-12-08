@@ -1,4 +1,5 @@
 ﻿using FixItRight_Domain.Models;
+using FixItRight_Domain.RequestFeatures;
 
 namespace FixItRight_Domain.Repositories
 {
@@ -6,6 +7,6 @@ namespace FixItRight_Domain.Repositories
 	{
 		void CreateRating(Rating rating);
 		Task<Rating?> GetRatingByBookingId(Guid bookingId, bool trackChange);
-		Task<IEnumerable<Rating>> GetRatings(bool trackChange);
+		Task<PagedList<Rating>> GetRatings(RatingParameters ratingParameters, bool trackChange);
 	}
 }
