@@ -63,7 +63,7 @@ builder.Services.ConfigureBlobService(builder.Configuration);
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<Utils>();
-builder.Services.AddSignalR();
+builder.Services.AddSignalR().AddAzureSignalR(builder.Configuration.GetConnectionString("SignalR"));
 builder.Host.UseSerilog((hostContext, configuration) =>
 {
 	configuration.ReadFrom.Configuration(hostContext.Configuration);
