@@ -14,6 +14,13 @@ namespace FixItRight_Infrastructure.Repositories
 
 		public void CreateRating(Rating rating) => Create(rating);
 
+		public async Task<double> GetAverageRatingByMechanistId(string mechanistId)
+		{
+			var ratings = FindAll(false).AsSplitQuery().Include(c => c.Booking).ThenInclude(c => c.Mechanist).Where(c => c.Booking.MechanistId.Equals(mechanistId));
+			if (await ratings.CountAsync() == 0) return 0;
+			return await ratings.AverageAsync(c => c.Score);
+		}
+
 		public async Task<Rating?> GetRatingByBookingId(Guid bookingId, bool trackChange) => await FindByCondition(r => r.BookingId.Equals(bookingId), trackChange).SingleOrDefaultAsync();
 
 		public async Task<PagedList<Rating>> GetRatings(RatingParameters ratingParameters, bool trackChange)

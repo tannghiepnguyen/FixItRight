@@ -216,6 +216,10 @@ namespace FixItRight_Service.UserServices
 			{
 				returnUsers = returnUsers.Where(u => u.Roles.Contains(userParameters.Role.ToString()));
 			}
+			if (!string.IsNullOrWhiteSpace(userParameters.SearchName))
+			{
+				returnUsers = returnUsers.Where(u => u.Fullname.ToLower().Contains(userParameters.SearchName.ToLower()));
+			}
 			returnUsers = returnUsers.Where(u => u.Active == userParameters.Active);
 			returnUsers = returnUsers.Where(u => u.IsVerified == userParameters.IsVerified);
 			var usersWithMetaData = PagedList<UserForReturnDto>.ToPagedList(returnUsers, userParameters.PageNumber, userParameters.PageSize);

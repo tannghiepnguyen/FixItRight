@@ -8,5 +8,6 @@ namespace FixItRight_Service.RatingServices
 		Task<RatingForReturnDto> CreateRating(RatingForCreationDto ratingForCreationDto);
 		Task<RatingForReturnDto> GetRatingByBookingId(Guid bookingId, bool trackChange);
 		Task<(IEnumerable<RatingForReturnDto> ratings, MetaData metaData)> GetRatings(RatingParameters ratingParameters, bool trackChange);
+		Task<double> GetAverageRatingByMechanistId(string mechanistId);
 	}
 }

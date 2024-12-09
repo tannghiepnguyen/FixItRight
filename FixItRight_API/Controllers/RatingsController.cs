@@ -50,7 +50,20 @@ namespace FixItRight_API.Controllers
 			Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagedResult.metaData));
 			return Ok(new
 			{
-				data = pagedResult.ratings
+				data = pagedResult.ratings,
+				pagedResult.metaData,
+			});
+		}
+
+		[HttpGet("{mechanistId:guid}/average-rating")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize]
+		public async Task<IActionResult> GetAverageRatingByMechanistId([FromRoute] string mechanistId)
+		{
+			var averageRating = await serviceManager.RatingService.GetAverageRatingByMechanistId(mechanistId);
+			return Ok(new
+			{
+				data = averageRating
 			});
 		}
 	}

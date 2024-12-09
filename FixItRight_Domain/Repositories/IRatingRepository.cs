@@ -8,5 +8,7 @@ namespace FixItRight_Domain.Repositories
 		void CreateRating(Rating rating);
 		Task<Rating?> GetRatingByBookingId(Guid bookingId, bool trackChange);
 		Task<PagedList<Rating>> GetRatings(RatingParameters ratingParameters, bool trackChange);
+
+		Task<double> GetAverageRatingByMechanistId(string mechanistId);
 	}
 }

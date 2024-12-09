@@ -40,7 +40,8 @@ namespace FixItRight_API.Controllers
 			Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagedResult.metaData));
 			return Ok(new
 			{
-				data = pagedResult.transactions
+				data = pagedResult.transactions,
+				pagedResult.metaData
 			});
 		}
 
@@ -53,7 +54,8 @@ namespace FixItRight_API.Controllers
 			Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagedResult.metaData));
 			return Ok(new
 			{
-				data = pagedResult.transactions
+				data = pagedResult.transactions,
+				pagedResult.metaData
 			});
 		}
 

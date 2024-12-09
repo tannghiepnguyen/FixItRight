@@ -28,7 +28,8 @@ namespace FixItRight_API.Controllers
 			Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagedResult.metaData));
 			return Ok(new
 			{
-				data = pagedResult.bookings
+				data = pagedResult.bookings,
+				pagedResult.metaData
 			});
 		}
 

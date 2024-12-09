@@ -48,5 +48,10 @@ namespace FixItRight_Service.RatingServices
 			var ratings = mapper.Map<IEnumerable<RatingForReturnDto>>(ratingsWithMetaData);
 			return (ratings, ratingsWithMetaData.MetaData);
 		}
+
+		public async Task<double> GetAverageRatingByMechanistId(string mechanistId)
+		{
+			return (double)await repositoryManager.RatingRepository.GetAverageRatingByMechanistId(mechanistId);
+		}
 	}
 }
