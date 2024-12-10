@@ -1,4 +1,5 @@
-﻿using FixItRight_Domain.Constants;
+﻿using FixItRight_Domain;
+using FixItRight_Domain.Constants;
 using FixItRight_Domain.RequestFeatures;
 using FixItRight_Service.BookingServices.DTOs;
 using FixItRight_Service.IServices;
@@ -28,8 +29,11 @@ namespace FixItRight_API.Controllers
 			Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagedResult.metaData));
 			return Ok(new
 			{
-				data = pagedResult.bookings,
-				pagedResult.metaData
+				data = new CustomListResponse<BookingForReturnDto>()
+				{
+					Data = pagedResult.bookings,
+					MetaData = pagedResult.metaData
+				}
 			});
 		}
 

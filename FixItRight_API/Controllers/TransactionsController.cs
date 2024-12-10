@@ -1,4 +1,5 @@
-﻿using FixItRight_Domain.Constants;
+﻿using FixItRight_Domain;
+using FixItRight_Domain.Constants;
 using FixItRight_Domain.RequestFeatures;
 using FixItRight_Service.IServices;
 using FixItRight_Service.TransactionServices.DTOs;
@@ -40,8 +41,11 @@ namespace FixItRight_API.Controllers
 			Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagedResult.metaData));
 			return Ok(new
 			{
-				data = pagedResult.transactions,
-				pagedResult.metaData
+				data = new CustomListResponse<TransactionForReturnDto>()
+				{
+					Data = pagedResult.transactions,
+					MetaData = pagedResult.metaData
+				}
 			});
 		}
 
@@ -54,8 +58,11 @@ namespace FixItRight_API.Controllers
 			Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagedResult.metaData));
 			return Ok(new
 			{
-				data = pagedResult.transactions,
-				pagedResult.metaData
+				data = new CustomListResponse<TransactionForReturnDto>()
+				{
+					Data = pagedResult.transactions,
+					MetaData = pagedResult.metaData
+				}
 			});
 		}
 

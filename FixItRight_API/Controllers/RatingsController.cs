@@ -1,4 +1,5 @@
-﻿using FixItRight_Domain.Constants;
+﻿using FixItRight_Domain;
+using FixItRight_Domain.Constants;
 using FixItRight_Domain.RequestFeatures;
 using FixItRight_Service.IServices;
 using FixItRight_Service.RatingServices.DTOs;
@@ -50,8 +51,11 @@ namespace FixItRight_API.Controllers
 			Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagedResult.metaData));
 			return Ok(new
 			{
-				data = pagedResult.ratings,
-				pagedResult.metaData,
+				data = new CustomListResponse<RatingForReturnDto>()
+				{
+					Data = pagedResult.ratings,
+					MetaData = pagedResult.metaData
+				}
 			});
 		}
 
