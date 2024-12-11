@@ -58,12 +58,12 @@ namespace FixItRight_API.Controllers
 			return NoContent();
 		}
 
-		[HttpDelete("{id}")]
+		[HttpPut("{id}/deactivate")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
-		[Authorize]
-		public async Task<IActionResult> DeleteUser(string id)
+		[Authorize(Roles = $"{nameof(Role.Admin)}")]
+		public async Task<IActionResult> DeactivateUser(string id)
 		{
-			await service.UserService.DeleteUser(id);
+			await service.UserService.DeactivateUser(id);
 			return NoContent();
 		}
 
@@ -76,5 +76,13 @@ namespace FixItRight_API.Controllers
 			return NoContent();
 		}
 
+		[HttpPut("{userId}/password")]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[Authorize]
+		public async Task<IActionResult> UpdateUserPassword([FromRoute] string userId, [FromBody] UserForUpdatePasswordDto userForUpdatePasswordDto)
+		{
+			var result = await service.UserService.UpdateUserPassword(userId, userForUpdatePasswordDto);
+			return NoContent();
+		}
 	}
 }

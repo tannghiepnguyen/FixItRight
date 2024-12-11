@@ -67,10 +67,15 @@ namespace FixItRight_Service.UserServices
 		public async Task<bool> ValidateUser(UserForAuthenticationDto userForAuth)
 		{
 			user = await userManager.FindByNameAsync(userForAuth.UserName!);
+			if (user is null || !(await userManager.CheckPasswordAsync(user, userForAuth.Password!)))
+			{
+				throw new NotAuthenticatedException("Username or password is incorrect");
+			}
+			if (!user.Active)
+			{
+				throw new NotAuthenticatedException("User is deactivated");
+			}
 			var result = (user != null && await userManager.CheckPasswordAsync(user, userForAuth.Password!) && user.Active);
-			if (!result)
-				logger.LogWarning($"{nameof(ValidateUser)}: " +
-					$"Authentication failed. Wrong user name or password.");
 			return result;
 		}
 		public async Task<TokenDto> CreateToken(bool populateExp)
@@ -257,7 +262,7 @@ namespace FixItRight_Service.UserServices
 			return await userManager.UpdateAsync(user);
 		}
 
-		public async Task<IdentityResult> DeleteUser(string userId)
+		public async Task<IdentityResult> DeactivateUser(string userId)
 		{
 			var user = await userManager.FindByIdAsync(userId);
 
@@ -277,6 +282,15 @@ namespace FixItRight_Service.UserServices
 			user.IsVerified = true;
 
 			return await userManager.UpdateAsync(user);
+		}
+
+		public async Task<IdentityResult> UpdateUserPassword(string userId, UserForUpdatePasswordDto userForUpdatePasswordDto)
+		{
+			var user = await userManager.FindByIdAsync(userId);
+
+			if (user is null) throw new UserNotFoundException(userId);
+
+			return await userManager.ChangePasswordAsync(user, userForUpdatePasswordDto.OldPassword, userForUpdatePasswordDto.NewPassword);
 		}
 	}
 }

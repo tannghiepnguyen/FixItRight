@@ -14,10 +14,7 @@ namespace FixItRight_Service.UserServices.DTOs
 		public DateOnly Birthday { get; init; }
 		[Required]
 		public string UserName { get; init; }
-		[Required]
-		public string Address { get; set; }
-		[Required]
-		public string Password { get; init; }
+		public string? Address { get; set; }
 		[Required]
 		public string PhoneNumber { get; init; }
 		public IFormFile? CccdFront { get; init; }
