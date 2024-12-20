@@ -20,31 +20,12 @@ namespace FixItRight_API.Controllers
 			this.serviceManager = serviceManager;
 		}
 
-		[HttpGet]
+		[HttpPost("get-users")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		[Authorize(Roles = $"{nameof(Role.Admin)}")]
+		[Authorize]
 		public async Task<IActionResult> GetRepairServicesAsync([FromQuery] RepairServiceParameters repairServiceParameters)
 		{
 			var pagedResult = await serviceManager.RepairServiceService.GetRepairServicesAsync(repairServiceParameters, false);
-			Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagedResult.metaData));
-			return Ok(new
-			{
-				data = new CustomListResponse<ServiceForReturnDto>()
-				{
-					Data = pagedResult.services,
-					MetaData = pagedResult.metaData
-				}
-			});
-		}
-
-		[HttpGet("active")]
-		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		[Authorize(Roles = $"{nameof(Role.Customer)}, {nameof(Role.Mechanist)}")]
-		public async Task<IActionResult> GetActiveRepairServicesAsync([FromQuery] RepairServiceParameters repairServiceParameters)
-		{
-			var pagedResult = await serviceManager.RepairServiceService.GetActiveRepairServicesAsync(repairServiceParameters, false);
 			Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagedResult.metaData));
 			return Ok(new
 			{
@@ -60,7 +41,7 @@ namespace FixItRight_API.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[Authorize]
-		public async Task<IActionResult> GetRepairServiceByIdAsync([FromRoute] Guid id)
+		public async Task<IActionResult> GetRepairServiceById([FromRoute] Guid id)
 		{
 			var service = await serviceManager.RepairServiceService.GetRepairServiceByIdAsync(id, false);
 			return Ok(new
@@ -76,7 +57,7 @@ namespace FixItRight_API.Controllers
 		public async Task<IActionResult> AddRepairServiceAsync([FromForm] ServiceForCreationDto repairService)
 		{
 			var service = await serviceManager.RepairServiceService.AddRepairServiceAsync(repairService);
-			return CreatedAtAction(nameof(GetRepairServiceByIdAsync), new { id = service.Id }, service);
+			return CreatedAtAction(nameof(GetRepairServiceById), new { id = service.Id }, service);
 		}
 
 		[HttpPut("{id:guid}")]

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FixItRight_Domain.Constants;
 using FixItRight_Domain.Exceptions;
 using FixItRight_Domain.Models;
 using FixItRight_Domain.Repositories;
@@ -13,12 +14,14 @@ namespace FixItRight_Service.RepairServiceServices
 		private readonly IRepositoryManager repositoryManager;
 		private readonly ILoggerManager logger;
 		private readonly IMapper mapper;
+		private readonly IBlobService blobService;
 
-		public RepairServiceService(IRepositoryManager repositoryManager, ILoggerManager logger, IMapper mapper)
+		public RepairServiceService(IRepositoryManager repositoryManager, ILoggerManager logger, IMapper mapper, IBlobService blobService)
 		{
 			this.repositoryManager = repositoryManager;
 			this.logger = logger;
 			this.mapper = mapper;
+			this.blobService = blobService;
 		}
 		private async Task<Service?> CheckServiceExist(Guid id, bool trackChange)
 		{
@@ -31,6 +34,8 @@ namespace FixItRight_Service.RepairServiceServices
 			var service = mapper.Map<Service>(repairService);
 			service.Active = true;
 			service.CreatedAt = DateTime.Now;
+			string filename = $"{Guid.NewGuid()}{Path.GetExtension(repairService.File.FileName)}";
+			service.Image = await blobService.UploadBlob(filename, StorageContainer.STORAGE_CONTAINER, repairService.File);
 			repositoryManager.RepairService.AddRepairServiceAsync(service);
 			await repositoryManager.SaveAsync();
 			return mapper.Map<ServiceForReturnDto>(service);
@@ -67,6 +72,12 @@ namespace FixItRight_Service.RepairServiceServices
 		{
 			var service = await CheckServiceExist(id, trackChange);
 			mapper.Map(repairService, service);
+			if (repairService.File is not null && repairService.File.Length > 0)
+			{
+				await blobService.DeleteBlob(service.Image.Split('/').Last(), StorageContainer.STORAGE_CONTAINER);
+				string filename = $"{Guid.NewGuid()}{Path.GetExtension(repairService.File.FileName)}";
+				service.Image = await blobService.UploadBlob(filename, StorageContainer.STORAGE_CONTAINER, repairService.File);
+			}
 			service.UpdatedAt = DateTime.Now;
 			await repositoryManager.SaveAsync();
 		}
