@@ -26,8 +26,14 @@ namespace FixItRight_Infrastructure.Repositories
 
 		public async Task<PagedList<Service>> GetRepairServicesAsync(RepairServiceParameters repairServiceParameters, bool trackChange)
 		{
-			var services = await FindAll(trackChange).ToListAsync();
-			return PagedList<Service>.ToPagedList(services, repairServiceParameters.PageNumber, repairServiceParameters.PageSize);
+			var services = FindAll(trackChange)
+				.Where(c => c.Active == repairServiceParameters.Active);
+			if (!string.IsNullOrWhiteSpace(repairServiceParameters.SearchName))
+			{
+				var searchTerm = repairServiceParameters.SearchName.Trim().ToLower();
+				services = services.Where(c => c.Name.Trim().ToLower().Contains(searchTerm));
+			}
+			return PagedList<Service>.ToPagedList(await services.ToListAsync(), repairServiceParameters.PageNumber, repairServiceParameters.PageSize);
 		}
 
 	}

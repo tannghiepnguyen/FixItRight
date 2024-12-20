@@ -1,7 +1,6 @@
 ﻿using FixItRight_Domain.Exceptions;
 using FixItRight_Service.IServices;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 
 namespace FixItRight_API
 {
@@ -33,18 +32,20 @@ namespace FixItRight_API
 				{
 					Title = "An error occurred",
 					Status = httpContext.Response.StatusCode,
-					Detail = exception.Message,
+					Extensions = {
+						["message"] =exception.Message
+					},
 					Type = exception.GetType().Name
 				},
 				Exception = exception
 			});
 			if (!result)
 			{
-				await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
+				await httpContext.Response.WriteAsJsonAsync(new
 				{
 					Title = "An error occurred",
 					Status = httpContext.Response.StatusCode,
-					Detail = exception.Message,
+					message = exception.Message,
 					Type = exception.GetType().Name
 				});
 			}

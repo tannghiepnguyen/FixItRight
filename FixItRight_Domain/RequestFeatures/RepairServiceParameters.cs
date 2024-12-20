@@ -2,5 +2,7 @@
 {
 	public class RepairServiceParameters : RequestParameters
 	{
+		public bool Active { get; set; } = true;
+		public string SearchName { get; set; } = string.Empty;
 	}
 }
