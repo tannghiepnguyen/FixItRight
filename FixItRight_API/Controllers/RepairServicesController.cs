@@ -20,7 +20,7 @@ namespace FixItRight_API.Controllers
 			this.serviceManager = serviceManager;
 		}
 
-		[HttpPost("get-users")]
+		[HttpPost("get-services")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize]
 		public async Task<IActionResult> GetRepairServicesAsync([FromQuery] RepairServiceParameters repairServiceParameters)

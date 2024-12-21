@@ -5,8 +5,7 @@ namespace FixItRight_Service.RepairServiceServices.DTOs
 {
 	public record ServiceForUpdateDto
 	{
-		[Required]
-		public IFormFile File { get; init; }
+		public IFormFile? File { get; init; }
 		[Required]
 		public string Name { get; init; }
 		[Required]

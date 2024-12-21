@@ -10,7 +10,7 @@ namespace FixItRight_Infrastructure.Configurations
 		{
 			builder.HasKey(s => s.Id);
 			builder.Property(t => t.Id).ValueGeneratedOnAdd();
-			builder.Property(s => s.Image).IsRequired();
+			builder.Property(s => s.Image);
 			builder.Property(s => s.Name).IsRequired().HasMaxLength(50);
 			builder.Property(s => s.Description).IsRequired().HasMaxLength(200);
 			builder.Property(s => s.Price).IsRequired();

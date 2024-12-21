@@ -32,7 +32,7 @@ namespace FixItRight_API.Controllers
 			});
 		}
 
-		[HttpGet("{userId}")]
+		[HttpPost("{userId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Roles = $"{nameof(Role.Customer)}")]
 		public async Task<IActionResult> GetTransactionsByUserId([FromRoute] string userId, [FromQuery] TransactionParameters transactionParameters)
@@ -49,7 +49,7 @@ namespace FixItRight_API.Controllers
 			});
 		}
 
-		[HttpGet]
+		[HttpPost("get-transactions")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Roles = $"{nameof(Role.Admin)}")]
 		public async Task<IActionResult> GetAllTransactions([FromQuery] TransactionParameters transactionParameters)

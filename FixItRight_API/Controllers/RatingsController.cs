@@ -42,7 +42,7 @@ namespace FixItRight_API.Controllers
 			return CreatedAtAction(nameof(GetRatingByBookingId), new { bookingId = newRating.BookingId }, newRating);
 		}
 
-		[HttpGet]
+		[HttpPost("get-ratings")]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<RatingForReturnDto>))]
 		[Authorize(Roles = $"{nameof(Role.Admin)}")]
 		public async Task<IActionResult> GetRatings([FromQuery] RatingParameters ratingParameters)

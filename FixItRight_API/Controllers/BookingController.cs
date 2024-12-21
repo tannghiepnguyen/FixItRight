@@ -20,7 +20,7 @@ namespace FixItRight_API.Controllers
 			this.serviceManager = serviceManager;
 		}
 
-		[HttpGet]
+		[HttpPost("get-bookings")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Roles = $"{nameof(Role.Admin)}")]
 		public async Task<IActionResult> GetBookings([FromQuery] BookingParameters bookingParameters)
