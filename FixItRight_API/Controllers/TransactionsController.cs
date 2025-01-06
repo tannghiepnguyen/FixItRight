@@ -9,7 +9,7 @@ using System.Text.Json;
 
 namespace FixItRight_API.Controllers
 {
-	[Route("api/[controller]")]
+	[Route("api/transactions")]
 	[ApiController]
 	public class TransactionsController : ControllerBase
 	{
@@ -75,7 +75,7 @@ namespace FixItRight_API.Controllers
 			return Ok(new { data = paymentUrl });
 		}
 
-		[HttpGet("IPN")]
+		[HttpGet("ipn")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<IActionResult> IPN()
 		{

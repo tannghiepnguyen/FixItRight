@@ -25,7 +25,7 @@ namespace FixItRight_Service.ChatServices
 		{
 			await hubContext.Clients.Group(chatForCreationDto.BookingId.ToString()).SendAsync("ReceiveMessage", chatForCreationDto.SenderId, chatForCreationDto.Message);
 			var chat = mapper.Map<Chat>(chatForCreationDto);
-			chat.CreatedAt = DateTime.Now;
+			chat.CreatedAt = DateTime.UtcNow;
 			repositoryManager.ChatRepository.CreateChat(chat);
 			await repositoryManager.SaveAsync();
 		}

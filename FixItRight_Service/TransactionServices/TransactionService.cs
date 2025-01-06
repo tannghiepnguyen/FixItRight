@@ -32,11 +32,11 @@ namespace FixItRight_Service.TransactionServices
 			this.configuration = configuration;
 		}
 
-		private async Task<Booking> CheckBookingExist(Guid bookingId, bool trackChange)
+		private async Task<Transaction> CheckBookingExist(Guid bookingId, bool trackChange)
 		{
 			var booking = await repositoryManager.BookingRepository.GetBookingById(bookingId, trackChange);
 			if (booking is null) throw new BookingNotFoundException(bookingId);
-			return booking;
+			return await repositoryManager.TransactionRepository.GetTransactionByBookingId(bookingId, trackChange);
 		}
 
 		private async Task CheckUserExist(string userId)
@@ -48,7 +48,7 @@ namespace FixItRight_Service.TransactionServices
 		public async Task<string> CreateTransaction(TransactionForCreationDto transactionDto)
 		{
 			var transaction = mapper.Map<Transaction>(transactionDto);
-			transaction.CreatedAt = DateTime.Now;
+			transaction.CreatedAt = DateTime.UtcNow;
 			transaction.Status = TransactionStatus.Pending;
 			repositoryManager.TransactionRepository.CreateTransaction(transaction);
 			await repositoryManager.SaveAsync();
@@ -58,13 +58,13 @@ namespace FixItRight_Service.TransactionServices
 			vnpay.AddRequestData("vnp_Command", "pay");
 			vnpay.AddRequestData("vnp_TmnCode", configuration.GetSection("VNPay").GetSection("TmnCode").Value);
 			vnpay.AddRequestData("vnp_Amount", (transactionDto.Amount * 100).ToString());
-			vnpay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
+			vnpay.AddRequestData("vnp_CreateDate", DateTime.UtcNow.ToString("yyyyMMddHHmmss"));
 			vnpay.AddRequestData("vnp_CurrCode", "VND");
 			vnpay.AddRequestData("vnp_IpAddr", utils.GetIpAddress());
 			vnpay.AddRequestData("vnp_Locale", "vn");
 			vnpay.AddRequestData("vnp_OrderType", "other");
 			vnpay.AddRequestData("vnp_OrderInfo", $"Payment for order {transaction.Id}");
-			vnpay.AddRequestData("vnp_ReturnUrl", configuration.GetSection("VNPay").GetSection("ReturnUrlWeb").Value);
+			vnpay.AddRequestData("vnp_ReturnUrl", configuration.GetSection("VNPay").GetSection("ReturnUrlMobile").Value);
 			vnpay.AddRequestData("vnp_TxnRef", transaction.Id.ToString());
 			var paymentUrl = vnpay.CreateRequestUrl(configuration.GetSection("VNPay").GetSection("Url").Value, configuration.GetSection("VNPay").GetSection("HashSecret").Value);
 			return paymentUrl; // Redirect to this URL for payment

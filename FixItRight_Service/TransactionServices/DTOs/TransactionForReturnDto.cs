@@ -1,4 +1,6 @@
-﻿namespace FixItRight_Service.TransactionServices.DTOs
+﻿using FixItRight_Domain.Constants;
+
+namespace FixItRight_Service.TransactionServices.DTOs
 {
 	public record TransactionForReturnDto
 	{
@@ -6,6 +8,7 @@
 		public double Amount { get; init; }
 		public DateTime CreatedAt { get; init; }
 		public Guid BookingId { get; init; }
+		public TransactionStatus Status { get; init; }
 		public string UserId { get; init; }
 	}
 }

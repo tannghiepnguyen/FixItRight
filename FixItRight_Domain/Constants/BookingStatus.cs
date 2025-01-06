@@ -5,7 +5,6 @@
 		Cancelled,
 		Pending,
 		Accepted,
-		Completed,
-		NotPaid
+		Completed
 	}
 }

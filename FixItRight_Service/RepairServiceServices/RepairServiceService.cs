@@ -33,7 +33,7 @@ namespace FixItRight_Service.RepairServiceServices
 		{
 			var service = mapper.Map<Service>(repairService);
 			service.Active = true;
-			service.CreatedAt = DateTime.Now;
+			service.CreatedAt = DateTime.UtcNow;
 			string filename = $"{Guid.NewGuid()}{Path.GetExtension(repairService.File.FileName)}";
 			service.Image = await blobService.UploadBlob(filename, StorageContainer.STORAGE_CONTAINER, repairService.File);
 			repositoryManager.RepairService.AddRepairServiceAsync(service);
@@ -78,7 +78,7 @@ namespace FixItRight_Service.RepairServiceServices
 				string filename = $"{Guid.NewGuid()}{Path.GetExtension(repairService.File.FileName)}";
 				service.Image = await blobService.UploadBlob(filename, StorageContainer.STORAGE_CONTAINER, repairService.File);
 			}
-			service.UpdatedAt = DateTime.Now;
+			service.UpdatedAt = DateTime.UtcNow;
 			await repositoryManager.SaveAsync();
 		}
 	}
