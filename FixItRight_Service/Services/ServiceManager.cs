@@ -27,7 +27,7 @@ namespace FixItRight_Service.Services
 			userService = new Lazy<IUserService>(() => new UserService(logger, mapper, userManager, configuration, blobService));
 			repairServiceService = new Lazy<IRepairServiceService>(() => new RepairServiceService(repositoryManager, logger, mapper, blobService));
 			ratingService = new Lazy<IRatingService>(() => new RatingService(repositoryManager, logger, mapper));
-			bookingService = new Lazy<IBookingService>(() => new BookingService(repositoryManager, logger, mapper, userManager));
+			bookingService = new Lazy<IBookingService>(() => new BookingService(repositoryManager, logger, mapper));
 			transactionService = new Lazy<ITransactionService>(() => new TransactionService(repositoryManager, logger, mapper, userManager, utils, configuration));
 			chatService = new Lazy<IChatService>(() => new ChatService(repositoryManager, logger, mapper, hubContext));
 		}

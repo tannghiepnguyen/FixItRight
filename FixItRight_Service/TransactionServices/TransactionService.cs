@@ -45,6 +45,14 @@ namespace FixItRight_Service.TransactionServices
 			if (user is null) throw new UserNotFoundException(userId);
 		}
 
+		private async Task<User> GetRandomMechanist()
+		{
+			var mechanists = await userManager.GetUsersInRoleAsync(Role.Mechanist.ToString());
+			var random = new Random();
+			var randomMechanist = mechanists.ElementAt(random.Next(mechanists.Count));
+			return randomMechanist;
+		}
+
 		public async Task<string> CreateTransaction(TransactionForCreationDto transactionDto)
 		{
 			var transaction = mapper.Map<Transaction>(transactionDto);
@@ -124,6 +132,8 @@ namespace FixItRight_Service.TransactionServices
 			// Update transaction status based on response code
 			if (responseCode == "00")
 			{
+				var booking = await repositoryManager.BookingRepository.GetBookingById(transaction.BookingId, true);
+				booking.MechanistId = (await GetRandomMechanist()).Id;
 				transaction.Status = TransactionStatus.Success;
 			}
 			else

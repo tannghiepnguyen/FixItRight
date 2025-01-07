@@ -6,7 +6,6 @@ using FixItRight_Domain.Repositories;
 using FixItRight_Domain.RequestFeatures;
 using FixItRight_Service.BookingServices.DTOs;
 using FixItRight_Service.IServices;
-using Microsoft.AspNetCore.Identity;
 
 namespace FixItRight_Service.BookingServices
 {
@@ -15,7 +14,6 @@ namespace FixItRight_Service.BookingServices
 		private readonly IRepositoryManager repositoryManager;
 		private readonly ILoggerManager logger;
 		private readonly IMapper mapper;
-		private readonly UserManager<User> userManager;
 
 		private async Task<Booking> CheckBookingExist(Guid bookingId, bool trackChange)
 		{
@@ -24,25 +22,15 @@ namespace FixItRight_Service.BookingServices
 			return booking;
 		}
 
-		private async Task<User> GetRandomMechanist()
-		{
-			var mechanists = await userManager.GetUsersInRoleAsync(Role.Mechanist.ToString());
-			var random = new Random();
-			var randomMechanist = mechanists.ElementAt(random.Next(mechanists.Count));
-			return randomMechanist;
-		}
-
-		public BookingService(IRepositoryManager repositoryManager, ILoggerManager logger, IMapper mapper, UserManager<User> userManager)
+		public BookingService(IRepositoryManager repositoryManager, ILoggerManager logger, IMapper mapper)
 		{
 			this.repositoryManager = repositoryManager;
 			this.logger = logger;
 			this.mapper = mapper;
-			this.userManager = userManager;
 		}
 		public async Task<BookingForReturnDto> CreateBooking(BookingForCreationDto bookingForCreationDto)
 		{
 			var booking = mapper.Map<Booking>(bookingForCreationDto);
-			booking.MechanistId = (await GetRandomMechanist()).Id;
 			booking.Status = BookingStatus.Pending;
 			booking.BookingDate = DateTime.UtcNow;
 			repositoryManager.BookingRepository.CreateBooking(booking);
@@ -66,6 +54,20 @@ namespace FixItRight_Service.BookingServices
 		public async Task<(IEnumerable<BookingForReturnDto> bookings, MetaData metaData)> GetBookings(BookingParameters bookingParameters, bool trackChange)
 		{
 			var bookingsWithMetaData = await repositoryManager.BookingRepository.GetBookings(bookingParameters, trackChange);
+			var bookings = mapper.Map<IEnumerable<BookingForReturnDto>>(bookingsWithMetaData);
+			return (bookings, bookingsWithMetaData.MetaData);
+		}
+
+		public async Task<(IEnumerable<BookingForReturnDto> bookings, MetaData metaData)> GetBookingsByMechanistId(BookingParameters bookingParameters, string mechanistId, bool trackChange)
+		{
+			var bookingsWithMetaData = await repositoryManager.BookingRepository.GetBookingByMechanistId(bookingParameters, mechanistId, trackChange);
+			var bookings = mapper.Map<IEnumerable<BookingForReturnDto>>(bookingsWithMetaData);
+			return (bookings, bookingsWithMetaData.MetaData);
+		}
+
+		public async Task<(IEnumerable<BookingForReturnDto> bookings, MetaData metaData)> GetBookingsByCustomerId(BookingParameters bookingParameters, string customerId, bool trackChange)
+		{
+			var bookingsWithMetaData = await repositoryManager.BookingRepository.GetBookingByCustomerId(bookingParameters, customerId, trackChange);
 			var bookings = mapper.Map<IEnumerable<BookingForReturnDto>>(bookingsWithMetaData);
 			return (bookings, bookingsWithMetaData.MetaData);
 		}
