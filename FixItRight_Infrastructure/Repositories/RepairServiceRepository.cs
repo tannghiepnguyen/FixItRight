@@ -33,6 +33,7 @@ namespace FixItRight_Infrastructure.Repositories
 				var searchTerm = repairServiceParameters.SearchName.Trim().ToLower();
 				services = services.Where(c => c.Name.Trim().ToLower().Contains(searchTerm));
 			}
+			services = services.Where(c => c.CategoryId.Equals(repairServiceParameters.CategoryId));
 			return PagedList<Service>.ToPagedList(await services.ToListAsync(), repairServiceParameters.PageNumber, repairServiceParameters.PageSize);
 		}
 

@@ -12,5 +12,7 @@ namespace FixItRight_Service.RepairServiceServices.DTOs
 		public string Description { get; init; }
 		[Required]
 		public double Price { get; init; }
+		[Required]
+		public Guid CategoryId { get; init; }
 	}
 }
