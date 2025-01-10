@@ -16,6 +16,7 @@ namespace FixItRight_Infrastructure.Persistence
 		{
 			base.OnModelCreating(builder);
 
+			builder.ApplyConfiguration(new CategoryConfiguration());
 			builder.ApplyConfiguration(new UserConfiguration());
 			builder.ApplyConfiguration(new ServiceConfiguration());
 			builder.ApplyConfiguration(new BookingConfiguration());
@@ -23,6 +24,7 @@ namespace FixItRight_Infrastructure.Persistence
 			builder.ApplyConfiguration(new RatingConfiguration());
 			builder.ApplyConfiguration(new TransactionConfiguration());
 			builder.ApplyConfiguration(new RoleConfiguration());
+
 		}
 
 		public DbSet<User> Users { get; set; }
@@ -31,5 +33,6 @@ namespace FixItRight_Infrastructure.Persistence
 		public DbSet<Rating> Ratings { get; set; }
 		public DbSet<Service> Services { get; set; }
 		public DbSet<Transaction> Transactions { get; set; }
+		public DbSet<Category> Categories { get; set; }
 	}
 }

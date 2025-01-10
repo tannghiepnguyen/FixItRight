@@ -18,6 +18,7 @@ namespace FixItRight_Infrastructure.Configurations
 			builder.Property(s => s.CreatedAt).IsRequired();
 			builder.Property(s => s.UpdatedAt);
 			builder.HasMany(s => s.Bookings).WithOne(b => b.Service).HasForeignKey(b => b.ServiceId).OnDelete(DeleteBehavior.NoAction);
+			builder.HasOne(s => s.Category).WithMany(c => c.Services).HasForeignKey(s => s.CategoryId).OnDelete(DeleteBehavior.NoAction);
 
 			builder.HasData(
 				new Service
@@ -28,7 +29,8 @@ namespace FixItRight_Infrastructure.Configurations
 					Description = "Fridge Repair",
 					Price = 200000,
 					Active = true,
-					CreatedAt = DateTime.Now
+					CreatedAt = DateTime.Now,
+					CategoryId = Guid.Parse("9ca4ae5b-c18d-4115-821f-3a28ed7a416f")
 				},
 				new Service
 				{
@@ -38,7 +40,8 @@ namespace FixItRight_Infrastructure.Configurations
 					Description = "Air Condition Repair",
 					Price = 200000,
 					Active = true,
-					CreatedAt = DateTime.Now
+					CreatedAt = DateTime.Now,
+					CategoryId = Guid.Parse("9ca4ae5b-c18d-4115-821f-3a28ed7a416f")
 				},
 				new Service
 				{
@@ -48,7 +51,8 @@ namespace FixItRight_Infrastructure.Configurations
 					Description = "Washing Machine Repair",
 					Price = 200000,
 					Active = true,
-					CreatedAt = DateTime.Now
+					CreatedAt = DateTime.Now,
+					CategoryId = Guid.Parse("9ca4ae5b-c18d-4115-821f-3a28ed7a416f")
 				},
 				new Service
 				{
@@ -58,7 +62,8 @@ namespace FixItRight_Infrastructure.Configurations
 					Description = "TV Repair",
 					Price = 200000,
 					Active = true,
-					CreatedAt = DateTime.Now
+					CreatedAt = DateTime.Now,
+					CategoryId = Guid.Parse("9ca4ae5b-c18d-4115-821f-3a28ed7a416f")
 				},
 				new Service
 				{
@@ -68,7 +73,8 @@ namespace FixItRight_Infrastructure.Configurations
 					Description = "Microwave Repair",
 					Price = 200000,
 					Active = true,
-					CreatedAt = DateTime.Now
+					CreatedAt = DateTime.Now,
+					CategoryId = Guid.Parse("9ca4ae5b-c18d-4115-821f-3a28ed7a416f")
 				},
 				new Service
 				{
@@ -78,7 +84,8 @@ namespace FixItRight_Infrastructure.Configurations
 					Description = "Oven Repair",
 					Price = 200000,
 					Active = true,
-					CreatedAt = DateTime.Now
+					CreatedAt = DateTime.Now,
+					CategoryId = Guid.Parse("9ca4ae5b-c18d-4115-821f-3a28ed7a416f")
 				},
 				new Service
 				{
@@ -88,7 +95,52 @@ namespace FixItRight_Infrastructure.Configurations
 					Description = "Dishwasher Repair",
 					Price = 200000,
 					Active = true,
-					CreatedAt = DateTime.Now
+					CreatedAt = DateTime.Now,
+					CategoryId = Guid.Parse("9ca4ae5b-c18d-4115-821f-3a28ed7a416f")
+				},
+				new Service
+				{
+					Id = Guid.Parse("23814aee-13c1-41e4-a80d-bb8882eb00b2"),
+					Image = "https://fixitright.blob.core.windows.net/fixitright/pipe.jpg",
+					Name = "Pipe Repair",
+					Description = "Pipe Repair",
+					Price = 200000,
+					Active = true,
+					CreatedAt = DateTime.Now,
+					CategoryId = Guid.Parse("150dcc51-3c46-4b48-bcbb-ec9bf217edfb")
+				},
+				new Service
+				{
+					Id = Guid.Parse("e21baed2-ac4d-4d91-af85-370f8ae5dd6c"),
+					Image = "https://fixitright.blob.core.windows.net/fixitright/sink.jpg",
+					Name = "Sink Repair",
+					Description = "Sink Repair",
+					Price = 200000,
+					Active = true,
+					CreatedAt = DateTime.Now,
+					CategoryId = Guid.Parse("150dcc51-3c46-4b48-bcbb-ec9bf217edfb")
+				},
+				new Service
+				{
+					Id = Guid.Parse("f5c248ee-d9e6-44d3-9b16-117ceb616b9e"),
+					Image = "https://fixitright.blob.core.windows.net/fixitright/toilet.jpg",
+					Name = "Toilet Repair",
+					Description = "Toilet Repair",
+					Price = 200000,
+					Active = true,
+					CreatedAt = DateTime.Now,
+					CategoryId = Guid.Parse("150dcc51-3c46-4b48-bcbb-ec9bf217edfb")
+				},
+				new Service
+				{
+					Id = Guid.Parse("3d32363b-dfa9-49ee-a6ac-8d3e7983294b"),
+					Image = "https://fixitright.blob.core.windows.net/fixitright/shower.jpg",
+					Name = "Shower Repair",
+					Description = "Shower Repair",
+					Price = 200000,
+					Active = true,
+					CreatedAt = DateTime.Now,
+					CategoryId = Guid.Parse("150dcc51-3c46-4b48-bcbb-ec9bf217edfb")
 				}
 			);
 		}

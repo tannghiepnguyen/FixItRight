@@ -7,6 +7,7 @@
 		IBookingRepository BookingRepository { get; }
 		ITransactionRepository TransactionRepository { get; }
 		IChatRepository ChatRepository { get; }
+		ICategoryRepository CategoryRepository { get; }
 		Task SaveAsync();
 	}
 }

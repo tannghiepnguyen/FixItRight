@@ -19,16 +19,18 @@ namespace FixItRight_Infrastructure.Repositories
 			var bookings = FindByCondition(booking => booking.CustomerId.Equals(customerId), trackChange);
 			bookings = bookings.Where(c => c.Status == bookingParameters.Status);
 			bookings = bookings.Include(c => c.Rating);
+			bookings = bookings.Include(c => c.Service);
 			return PagedList<Booking>.ToPagedList((await bookings.ToListAsync()), bookingParameters.PageNumber, bookingParameters.PageSize);
 		}
 
-		public async Task<Booking?> GetBookingById(Guid bookingId, bool trackChange) => await FindByCondition(booking => booking.Id.Equals(bookingId), trackChange).Include(c => c.Rating).SingleOrDefaultAsync();
+		public async Task<Booking?> GetBookingById(Guid bookingId, bool trackChange) => await FindByCondition(booking => booking.Id.Equals(bookingId), trackChange).Include(c => c.Rating).Include(c => c.Service).SingleOrDefaultAsync();
 
 		public async Task<PagedList<Booking>> GetBookingByMechanistId(BookingParameters bookingParameters, string mechanistId, bool trackChange)
 		{
 			var bookings = FindByCondition(booking => booking.MechanistId.Equals(mechanistId), trackChange);
 			bookings = bookings.Where(c => c.Status == bookingParameters.Status);
 			bookings = bookings.Include(c => c.Rating);
+			bookings = bookings.Include(c => c.Service);
 			return PagedList<Booking>.ToPagedList((await bookings.ToListAsync()), bookingParameters.PageNumber, bookingParameters.PageSize);
 		}
 
@@ -37,6 +39,7 @@ namespace FixItRight_Infrastructure.Repositories
 			var bookings = FindAll(trackChange);
 			bookings = bookings.Where(c => c.Status == bookingParameters.Status);
 			bookings = bookings.Include(c => c.Rating);
+			bookings = bookings.Include(c => c.Service);
 			return PagedList<Booking>.ToPagedList((await bookings.ToListAsync()), bookingParameters.PageNumber, bookingParameters.PageSize);
 		}
 	}

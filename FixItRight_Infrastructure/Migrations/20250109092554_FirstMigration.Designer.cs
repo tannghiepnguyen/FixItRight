@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FixItRight_Infrastructure.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20241129155611_SeedRepairService")]
-    partial class SeedRepairService
+    [Migration("20250109092554_FirstMigration")]
+    partial class FirstMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,7 +39,6 @@ namespace FixItRight_Infrastructure.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("MechanistId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<Guid>("ServiceId")
@@ -60,32 +59,59 @@ namespace FixItRight_Infrastructure.Migrations
                     b.ToTable("Bookings");
                 });
 
+            modelBuilder.Entity("FixItRight_Domain.Models.Category", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("9ca4ae5b-c18d-4115-821f-3a28ed7a416f"),
+                            Name = "Electricity"
+                        },
+                        new
+                        {
+                            Id = new Guid("150dcc51-3c46-4b48-bcbb-ec9bf217edfb"),
+                            Name = "Plumber"
+                        });
+                });
+
             modelBuilder.Entity("FixItRight_Domain.Models.Chat", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("BookingId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("CustomerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("MechanistId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("BookingId");
 
-                    b.HasIndex("MechanistId");
+                    b.HasIndex("SenderId");
 
                     b.ToTable("Chats");
                 });
@@ -124,6 +150,9 @@ namespace FixItRight_Infrastructure.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -133,7 +162,6 @@ namespace FixItRight_Infrastructure.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Image")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -149,6 +177,8 @@ namespace FixItRight_Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CategoryId");
+
                     b.ToTable("Services");
 
                     b.HasData(
@@ -156,7 +186,8 @@ namespace FixItRight_Infrastructure.Migrations
                         {
                             Id = new Guid("cd7bdc7f-6e90-46fc-a9a3-f5fab0169851"),
                             Active = true,
-                            CreatedAt = new DateTime(2024, 11, 29, 22, 56, 10, 801, DateTimeKind.Local).AddTicks(9188),
+                            CategoryId = new Guid("9ca4ae5b-c18d-4115-821f-3a28ed7a416f"),
+                            CreatedAt = new DateTime(2025, 1, 9, 16, 25, 54, 103, DateTimeKind.Local).AddTicks(7737),
                             Description = "Fridge Repair",
                             Image = "https://fixitright.blob.core.windows.net/fixitright/fridge.jpg",
                             Name = "Fridge Repair",
@@ -166,7 +197,8 @@ namespace FixItRight_Infrastructure.Migrations
                         {
                             Id = new Guid("85aa164a-a52c-4af3-95fd-29890f8df531"),
                             Active = true,
-                            CreatedAt = new DateTime(2024, 11, 29, 22, 56, 10, 801, DateTimeKind.Local).AddTicks(9204),
+                            CategoryId = new Guid("9ca4ae5b-c18d-4115-821f-3a28ed7a416f"),
+                            CreatedAt = new DateTime(2025, 1, 9, 16, 25, 54, 103, DateTimeKind.Local).AddTicks(7751),
                             Description = "Air Condition Repair",
                             Image = "https://fixitright.blob.core.windows.net/fixitright/aircondition.jpg",
                             Name = "Air Condition Repair",
@@ -176,7 +208,8 @@ namespace FixItRight_Infrastructure.Migrations
                         {
                             Id = new Guid("c3266aac-f1b7-4d4a-afb1-8bb2dae6bc8f"),
                             Active = true,
-                            CreatedAt = new DateTime(2024, 11, 29, 22, 56, 10, 801, DateTimeKind.Local).AddTicks(9206),
+                            CategoryId = new Guid("9ca4ae5b-c18d-4115-821f-3a28ed7a416f"),
+                            CreatedAt = new DateTime(2025, 1, 9, 16, 25, 54, 103, DateTimeKind.Local).AddTicks(7753),
                             Description = "Washing Machine Repair",
                             Image = "https://fixitright.blob.core.windows.net/fixitright/washing.jpg",
                             Name = "Washing Machine Repair",
@@ -186,7 +219,8 @@ namespace FixItRight_Infrastructure.Migrations
                         {
                             Id = new Guid("c9ff969c-4f3a-4c6c-877f-dd36f07189ed"),
                             Active = true,
-                            CreatedAt = new DateTime(2024, 11, 29, 22, 56, 10, 801, DateTimeKind.Local).AddTicks(9208),
+                            CategoryId = new Guid("9ca4ae5b-c18d-4115-821f-3a28ed7a416f"),
+                            CreatedAt = new DateTime(2025, 1, 9, 16, 25, 54, 103, DateTimeKind.Local).AddTicks(7756),
                             Description = "TV Repair",
                             Image = "https://fixitright.blob.core.windows.net/fixitright/tv.jpg",
                             Name = "TV Repair",
@@ -196,7 +230,8 @@ namespace FixItRight_Infrastructure.Migrations
                         {
                             Id = new Guid("a838bccb-7786-462f-b4b0-018b9ce03560"),
                             Active = true,
-                            CreatedAt = new DateTime(2024, 11, 29, 22, 56, 10, 801, DateTimeKind.Local).AddTicks(9209),
+                            CategoryId = new Guid("9ca4ae5b-c18d-4115-821f-3a28ed7a416f"),
+                            CreatedAt = new DateTime(2025, 1, 9, 16, 25, 54, 103, DateTimeKind.Local).AddTicks(7758),
                             Description = "Microwave Repair",
                             Image = "https://fixitright.blob.core.windows.net/fixitright/microwave.jpg",
                             Name = "Microwave Repair",
@@ -206,7 +241,8 @@ namespace FixItRight_Infrastructure.Migrations
                         {
                             Id = new Guid("8f19e546-a41d-488a-85df-558af0caf391"),
                             Active = true,
-                            CreatedAt = new DateTime(2024, 11, 29, 22, 56, 10, 801, DateTimeKind.Local).AddTicks(9211),
+                            CategoryId = new Guid("9ca4ae5b-c18d-4115-821f-3a28ed7a416f"),
+                            CreatedAt = new DateTime(2025, 1, 9, 16, 25, 54, 103, DateTimeKind.Local).AddTicks(7761),
                             Description = "Oven Repair",
                             Image = "https://fixitright.blob.core.windows.net/fixitright/oven.jpg",
                             Name = "Oven Repair",
@@ -216,10 +252,55 @@ namespace FixItRight_Infrastructure.Migrations
                         {
                             Id = new Guid("ccf59cf8-77d1-4f1e-82cc-42ee70dc0362"),
                             Active = true,
-                            CreatedAt = new DateTime(2024, 11, 29, 22, 56, 10, 801, DateTimeKind.Local).AddTicks(9214),
+                            CategoryId = new Guid("9ca4ae5b-c18d-4115-821f-3a28ed7a416f"),
+                            CreatedAt = new DateTime(2025, 1, 9, 16, 25, 54, 103, DateTimeKind.Local).AddTicks(7765),
                             Description = "Dishwasher Repair",
                             Image = "https://fixitright.blob.core.windows.net/fixitright/dishwasher.jpg",
                             Name = "Dishwasher Repair",
+                            Price = 200000.0
+                        },
+                        new
+                        {
+                            Id = new Guid("23814aee-13c1-41e4-a80d-bb8882eb00b2"),
+                            Active = true,
+                            CategoryId = new Guid("150dcc51-3c46-4b48-bcbb-ec9bf217edfb"),
+                            CreatedAt = new DateTime(2025, 1, 9, 16, 25, 54, 103, DateTimeKind.Local).AddTicks(7768),
+                            Description = "Pipe Repair",
+                            Image = "https://fixitright.blob.core.windows.net/fixitright/pipe.jpg",
+                            Name = "Pipe Repair",
+                            Price = 200000.0
+                        },
+                        new
+                        {
+                            Id = new Guid("e21baed2-ac4d-4d91-af85-370f8ae5dd6c"),
+                            Active = true,
+                            CategoryId = new Guid("150dcc51-3c46-4b48-bcbb-ec9bf217edfb"),
+                            CreatedAt = new DateTime(2025, 1, 9, 16, 25, 54, 103, DateTimeKind.Local).AddTicks(7772),
+                            Description = "Sink Repair",
+                            Image = "https://fixitright.blob.core.windows.net/fixitright/sink.jpg",
+                            Name = "Sink Repair",
+                            Price = 200000.0
+                        },
+                        new
+                        {
+                            Id = new Guid("f5c248ee-d9e6-44d3-9b16-117ceb616b9e"),
+                            Active = true,
+                            CategoryId = new Guid("150dcc51-3c46-4b48-bcbb-ec9bf217edfb"),
+                            CreatedAt = new DateTime(2025, 1, 9, 16, 25, 54, 103, DateTimeKind.Local).AddTicks(7774),
+                            Description = "Toilet Repair",
+                            Image = "https://fixitright.blob.core.windows.net/fixitright/toilet.jpg",
+                            Name = "Toilet Repair",
+                            Price = 200000.0
+                        },
+                        new
+                        {
+                            Id = new Guid("3d32363b-dfa9-49ee-a6ac-8d3e7983294b"),
+                            Active = true,
+                            CategoryId = new Guid("150dcc51-3c46-4b48-bcbb-ec9bf217edfb"),
+                            CreatedAt = new DateTime(2025, 1, 9, 16, 25, 54, 103, DateTimeKind.Local).AddTicks(7777),
+                            Description = "Shower Repair",
+                            Image = "https://fixitright.blob.core.windows.net/fixitright/shower.jpg",
+                            Name = "Shower Repair",
                             Price = 200000.0
                         });
                 });
@@ -239,10 +320,20 @@ namespace FixItRight_Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BookingId")
                         .IsUnique();
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Transactions");
                 });
@@ -517,8 +608,7 @@ namespace FixItRight_Infrastructure.Migrations
                     b.HasOne("FixItRight_Domain.Models.User", "Mechanist")
                         .WithMany("MechanistBookings")
                         .HasForeignKey("MechanistId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("FixItRight_Domain.Models.Service", "Service")
                         .WithMany("Bookings")
@@ -535,21 +625,21 @@ namespace FixItRight_Infrastructure.Migrations
 
             modelBuilder.Entity("FixItRight_Domain.Models.Chat", b =>
                 {
-                    b.HasOne("FixItRight_Domain.Models.User", "Customer")
-                        .WithMany("CustomerChats")
-                        .HasForeignKey("CustomerId")
+                    b.HasOne("FixItRight_Domain.Models.Booking", "Booking")
+                        .WithMany("Chats")
+                        .HasForeignKey("BookingId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("FixItRight_Domain.Models.User", "Mechanist")
-                        .WithMany("MechanistChats")
-                        .HasForeignKey("MechanistId")
+                    b.HasOne("FixItRight_Domain.Models.User", "Sender")
+                        .WithMany("Chats")
+                        .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Customer");
+                    b.Navigation("Booking");
 
-                    b.Navigation("Mechanist");
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("FixItRight_Domain.Models.Rating", b =>
@@ -557,10 +647,21 @@ namespace FixItRight_Infrastructure.Migrations
                     b.HasOne("FixItRight_Domain.Models.Booking", "Booking")
                         .WithOne("Rating")
                         .HasForeignKey("FixItRight_Domain.Models.Rating", "BookingId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Booking");
+                });
+
+            modelBuilder.Entity("FixItRight_Domain.Models.Service", b =>
+                {
+                    b.HasOne("FixItRight_Domain.Models.Category", "Category")
+                        .WithMany("Services")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("FixItRight_Domain.Models.Transaction", b =>
@@ -568,10 +669,18 @@ namespace FixItRight_Infrastructure.Migrations
                     b.HasOne("FixItRight_Domain.Models.Booking", "Booking")
                         .WithOne("Transaction")
                         .HasForeignKey("FixItRight_Domain.Models.Transaction", "BookingId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("FixItRight_Domain.Models.User", "User")
+                        .WithMany("Transactions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Booking");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -627,11 +736,18 @@ namespace FixItRight_Infrastructure.Migrations
 
             modelBuilder.Entity("FixItRight_Domain.Models.Booking", b =>
                 {
+                    b.Navigation("Chats");
+
                     b.Navigation("Rating")
                         .IsRequired();
 
                     b.Navigation("Transaction")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FixItRight_Domain.Models.Category", b =>
+                {
+                    b.Navigation("Services");
                 });
 
             modelBuilder.Entity("FixItRight_Domain.Models.Service", b =>
@@ -641,13 +757,13 @@ namespace FixItRight_Infrastructure.Migrations
 
             modelBuilder.Entity("FixItRight_Domain.Models.User", b =>
                 {
-                    b.Navigation("CustomerBookings");
+                    b.Navigation("Chats");
 
-                    b.Navigation("CustomerChats");
+                    b.Navigation("CustomerBookings");
 
                     b.Navigation("MechanistBookings");
 
-                    b.Navigation("MechanistChats");
+                    b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618
         }

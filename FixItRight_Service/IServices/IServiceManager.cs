@@ -1,4 +1,5 @@
 ﻿using FixItRight_Service.BookingServices;
+using FixItRight_Service.CategoryServices;
 using FixItRight_Service.ChatServices;
 using FixItRight_Service.RatingServices;
 using FixItRight_Service.RepairServiceServices;
@@ -15,5 +16,6 @@ namespace FixItRight_Service.IServices
 		IBookingService BookingService { get; }
 		ITransactionService TransactionService { get; }
 		IChatService ChatService { get; }
+		ICategoryService CategoryService { get; }
 	}
 }

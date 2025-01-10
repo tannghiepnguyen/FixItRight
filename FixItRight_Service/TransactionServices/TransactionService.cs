@@ -123,6 +123,7 @@ namespace FixItRight_Service.TransactionServices
 			var amount = long.Parse(vnpay.GetResponseData("vnp_Amount")) / 100;
 			var responseCode = vnpay.GetResponseData("vnp_ResponseCode");
 			var transaction = await repositoryManager.TransactionRepository.GetTransactionById(transactionId, true);
+			var booking = await repositoryManager.BookingRepository.GetBookingById(transaction.BookingId, true);
 
 			if (transaction == null)
 			{
@@ -132,7 +133,6 @@ namespace FixItRight_Service.TransactionServices
 			// Update transaction status based on response code
 			if (responseCode == "00")
 			{
-				var booking = await repositoryManager.BookingRepository.GetBookingById(transaction.BookingId, true);
 				booking.MechanistId = (await GetRandomMechanist()).Id;
 				transaction.Status = TransactionStatus.Success;
 			}

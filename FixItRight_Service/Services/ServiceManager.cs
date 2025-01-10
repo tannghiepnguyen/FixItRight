@@ -2,6 +2,7 @@
 using FixItRight_Domain.Models;
 using FixItRight_Domain.Repositories;
 using FixItRight_Service.BookingServices;
+using FixItRight_Service.CategoryServices;
 using FixItRight_Service.ChatServices;
 using FixItRight_Service.IServices;
 using FixItRight_Service.RatingServices;
@@ -22,6 +23,7 @@ namespace FixItRight_Service.Services
 		private readonly Lazy<IBookingService> bookingService;
 		private readonly Lazy<ITransactionService> transactionService;
 		private readonly Lazy<IChatService> chatService;
+		private readonly Lazy<ICategoryService> categoryService;
 		public ServiceManager(IRepositoryManager repositoryManager, ILoggerManager logger, IMapper mapper, UserManager<User> userManager, IConfiguration configuration, IBlobService blobService, Utils utils, IHubContext<MessageHub> hubContext)
 		{
 			userService = new Lazy<IUserService>(() => new UserService(logger, mapper, userManager, configuration, blobService));
@@ -30,6 +32,7 @@ namespace FixItRight_Service.Services
 			bookingService = new Lazy<IBookingService>(() => new BookingService(repositoryManager, logger, mapper));
 			transactionService = new Lazy<ITransactionService>(() => new TransactionService(repositoryManager, logger, mapper, userManager, utils, configuration));
 			chatService = new Lazy<IChatService>(() => new ChatService(repositoryManager, logger, mapper, hubContext));
+			categoryService = new Lazy<ICategoryService>(() => new CategoryService(repositoryManager, logger, mapper));
 		}
 		public IUserService UserService => userService.Value;
 
@@ -41,6 +44,8 @@ namespace FixItRight_Service.Services
 
 		public ITransactionService TransactionService => transactionService.Value;
 
-		public IChatService ChatService => throw new NotImplementedException();
+		public IChatService ChatService => chatService.Value;
+
+		public ICategoryService CategoryService => categoryService.Value;
 	}
 }
