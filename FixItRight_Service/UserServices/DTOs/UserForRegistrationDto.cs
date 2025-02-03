@@ -5,12 +5,10 @@ namespace FixItRight_Service.UserServices.DTOs
 {
 	public record UserForRegistrationDto
 	{
-		[Required]
-		public string Fullname { get; init; }
-		[Required]
-		public Gender Gender { get; init; }
-		[Required]
-		public DateOnly Birthday { get; init; }
+		public string? Fullname { get; init; }
+		public Gender? Gender { get; init; }
+		public DateOnly? Birthday { get; init; }
+		public string? Address { get; init; }
 		[Required]
 		public string UserName { get; init; }
 		[Required]

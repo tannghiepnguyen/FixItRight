@@ -8,11 +8,11 @@ namespace FixItRight_Infrastructure.Configurations
 	{
 		public void Configure(EntityTypeBuilder<User> builder)
 		{
-			builder.Property(u => u.Fullname).IsRequired();
+			builder.Property(u => u.Fullname);
 			builder.Property(u => u.Active).IsRequired();
 			builder.Property(u => u.Avatar);
-			builder.Property(u => u.Gender).HasConversion<string>().IsRequired();
-			builder.Property(u => u.Birthday).IsRequired();
+			builder.Property(u => u.Gender).HasConversion<string>();
+			builder.Property(u => u.Birthday);
 			builder.Property(u => u.IsVerified).IsRequired();
 			builder.Property(u => u.CccdFront);
 			builder.Property(u => u.CccdBack);

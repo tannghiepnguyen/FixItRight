@@ -35,7 +35,7 @@ namespace FixItRight_Service.UserServices
 		public async Task<IdentityResult> RegisterCustomer(UserForRegistrationDto userForRegistration)
 		{
 			var user = mapper.Map<User>(userForRegistration);
-			user.CreatedAt = DateTime.UtcNow;
+			user.CreatedAt = DateTime.Now;
 			user.Active = true;
 			user.IsVerified = false;
 			user.Avatar = "https://media.istockphoto.com/vectors/default-profile-picture-avatar-photo-placeholder-vector-illustration-vector-id1223671392?k=6&m=1223671392&s=170667a&w=0&h=zP3l7WJinOFaGb2i1F4g8IS2ylw0FlIaa6x3tP9sebU=";
@@ -52,7 +52,7 @@ namespace FixItRight_Service.UserServices
 		public async Task<IdentityResult> RegisterMechanist(UserForRegistrationDto userForRegistration)
 		{
 			var user = mapper.Map<User>(userForRegistration);
-			user.CreatedAt = DateTime.UtcNow;
+			user.CreatedAt = DateTime.Now;
 			user.Active = true;
 			user.IsVerified = false;
 			user.Avatar = "https://media.istockphoto.com/vectors/default-profile-picture-avatar-photo-placeholder-vector-illustration-vector-id1223671392?k=6&m=1223671392&s=170667a&w=0&h=zP3l7WJinOFaGb2i1F4g8IS2ylw0FlIaa6x3tP9sebU=";

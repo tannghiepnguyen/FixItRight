@@ -5,11 +5,11 @@ namespace FixItRight_Domain.Models
 {
 	public class User : IdentityUser
 	{
-		public string Fullname { get; set; }
+		public string? Fullname { get; set; }
 		public bool Active { get; set; }
 		public string? Avatar { get; set; }
-		public Gender Gender { get; set; }
-		public DateOnly Birthday { get; set; }
+		public Gender? Gender { get; set; }
+		public DateOnly? Birthday { get; set; }
 		public bool IsVerified { get; set; }
 		public string? CccdFront { get; set; }
 		public string? CccdBack { get; set; }

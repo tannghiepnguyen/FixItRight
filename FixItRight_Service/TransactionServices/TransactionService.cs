@@ -56,7 +56,7 @@ namespace FixItRight_Service.TransactionServices
 		public async Task<string> CreateTransaction(TransactionForCreationDto transactionDto)
 		{
 			var transaction = mapper.Map<Transaction>(transactionDto);
-			transaction.CreatedAt = DateTime.UtcNow;
+			transaction.CreatedAt = DateTime.Now;
 			transaction.Status = TransactionStatus.Pending;
 			repositoryManager.TransactionRepository.CreateTransaction(transaction);
 			await repositoryManager.SaveAsync();
@@ -66,7 +66,7 @@ namespace FixItRight_Service.TransactionServices
 			vnpay.AddRequestData("vnp_Command", "pay");
 			vnpay.AddRequestData("vnp_TmnCode", configuration.GetSection("VNPay").GetSection("TmnCode").Value);
 			vnpay.AddRequestData("vnp_Amount", (transactionDto.Amount * 100).ToString());
-			vnpay.AddRequestData("vnp_CreateDate", DateTime.UtcNow.ToString("yyyyMMddHHmmss"));
+			vnpay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
 			vnpay.AddRequestData("vnp_CurrCode", "VND");
 			vnpay.AddRequestData("vnp_IpAddr", utils.GetIpAddress());
 			vnpay.AddRequestData("vnp_Locale", "vn");

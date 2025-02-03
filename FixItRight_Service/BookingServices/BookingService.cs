@@ -32,7 +32,7 @@ namespace FixItRight_Service.BookingServices
 		{
 			var booking = mapper.Map<Booking>(bookingForCreationDto);
 			booking.Status = BookingStatus.Pending;
-			booking.BookingDate = DateTime.UtcNow;
+			booking.BookingDate = DateTime.Now;
 			repositoryManager.BookingRepository.CreateBooking(booking);
 			await repositoryManager.SaveAsync();
 			return mapper.Map<BookingForReturnDto>(booking);

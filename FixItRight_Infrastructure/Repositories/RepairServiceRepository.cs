@@ -22,11 +22,11 @@ namespace FixItRight_Infrastructure.Repositories
 			return PagedList<Service>.ToPagedList(services, repairServiceParameters.PageNumber, repairServiceParameters.PageSize);
 		}
 
-		public async Task<Service?> GetRepairServiceByIdAsync(Guid id, bool trackChange) => await FindByCondition(s => s.Id.Equals(id), trackChange).SingleOrDefaultAsync();
+		public async Task<Service?> GetRepairServiceByIdAsync(Guid id, bool trackChange) => await FindByCondition(s => s.Id.Equals(id), trackChange).Include(s => s.Category).SingleOrDefaultAsync();
 
 		public async Task<PagedList<Service>> GetRepairServicesAsync(RepairServiceParameters repairServiceParameters, bool trackChange)
 		{
-			var services = FindAll(trackChange)
+			var services = FindAll(trackChange).Include(s => s.Category)
 				.Where(c => c.Active == repairServiceParameters.Active);
 			if (!string.IsNullOrWhiteSpace(repairServiceParameters.SearchName))
 			{
