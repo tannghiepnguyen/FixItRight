@@ -23,7 +23,7 @@ namespace FixItRight_API.Controllers
 		[HttpGet("{id}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize]
-		public async Task<IActionResult> GetUserById(string id)
+		public async Task<IActionResult> GetUserById([FromRoute] string id)
 		{
 			var user = await service.UserService.GetUserById(id);
 			return Ok(new
@@ -52,7 +52,7 @@ namespace FixItRight_API.Controllers
 		[HttpPut("{id}")]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[Authorize]
-		public async Task<IActionResult> UpdateUser(string id, UserForUpdateDto userForUpdate)
+		public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UserForUpdateDto userForUpdate)
 		{
 			var user = await service.UserService.UpdateUser(id, userForUpdate);
 			return NoContent();
@@ -61,7 +61,7 @@ namespace FixItRight_API.Controllers
 		[HttpPut("{id}/deactivate")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[Authorize(Roles = $"{nameof(Role.Admin)}")]
-		public async Task<IActionResult> DeactivateUser(string id)
+		public async Task<IActionResult> DeactivateUser([FromRoute] string id)
 		{
 			await service.UserService.DeactivateUser(id);
 			return NoContent();
@@ -70,7 +70,7 @@ namespace FixItRight_API.Controllers
 		[HttpPut("{id}/verify")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[Authorize(Roles = $"{nameof(Role.Admin)}")]
-		public async Task<IActionResult> VerifyUser(string id)
+		public async Task<IActionResult> VerifyUser([FromRoute] string id)
 		{
 			await service.UserService.VerifyUser(id);
 			return NoContent();

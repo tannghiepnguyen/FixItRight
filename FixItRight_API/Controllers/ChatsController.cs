@@ -32,7 +32,7 @@ namespace FixItRight_API.Controllers
 		[HttpPost]
 		[Authorize(Roles = $"{nameof(Role.Customer)},{nameof(Role.Mechanist)}")]
 		[ProducesResponseType(StatusCodes.Status201Created)]
-		public IActionResult CreateChat([FromForm] ChatForCreationDto chat)
+		public IActionResult CreateChat([FromBody] ChatForCreationDto chat)
 		{
 			var newChat = serviceManager.ChatService.CreateChat(chat);
 			return StatusCode(201);

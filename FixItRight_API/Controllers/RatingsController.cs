@@ -36,7 +36,7 @@ namespace FixItRight_API.Controllers
 		[ProducesResponseType(StatusCodes.Status201Created, Type = typeof(RatingForReturnDto))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[Authorize(Roles = $"{nameof(Role.Customer)}")]
-		public async Task<IActionResult> AddRating([FromForm] RatingForCreationDto rating)
+		public async Task<IActionResult> AddRating([FromBody] RatingForCreationDto rating)
 		{
 			var newRating = await serviceManager.RatingService.CreateRating(rating);
 			return CreatedAtAction(nameof(GetRatingByBookingId), new { bookingId = newRating.BookingId }, newRating);

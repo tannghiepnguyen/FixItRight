@@ -40,7 +40,7 @@ namespace FixItRight_API.Controllers
 		[HttpPost("get-bookings-by-mechanist/{mechanistId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Roles = $"{nameof(Role.Mechanist)}")]
-		public async Task<IActionResult> GetBookingsByMechanistId(string mechanistId, [FromQuery] BookingParameters bookingParameters)
+		public async Task<IActionResult> GetBookingsByMechanistId([FromRoute] string mechanistId, [FromQuery] BookingParameters bookingParameters)
 		{
 			var pagedResult = await serviceManager.BookingService.GetBookingsByMechanistId(bookingParameters, mechanistId, false);
 			Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagedResult.metaData));
@@ -57,7 +57,7 @@ namespace FixItRight_API.Controllers
 		[HttpPost("get-bookings-by-customer/{customerId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Roles = $"{nameof(Role.Customer)}")]
-		public async Task<IActionResult> GetBookingsByCustomerId(string customerId, [FromQuery] BookingParameters bookingParameters)
+		public async Task<IActionResult> GetBookingsByCustomerId([FromRoute] string customerId, [FromQuery] BookingParameters bookingParameters)
 		{
 			var pagedResult = await serviceManager.BookingService.GetBookingsByCustomerId(bookingParameters, customerId, false);
 			Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagedResult.metaData));
@@ -75,7 +75,7 @@ namespace FixItRight_API.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[Authorize]
-		public async Task<IActionResult> GetBooking(Guid id)
+		public async Task<IActionResult> GetBooking([FromRoute] Guid id)
 		{
 			var bookings = await serviceManager.BookingService.GetBookingById(id, false);
 			return Ok(new

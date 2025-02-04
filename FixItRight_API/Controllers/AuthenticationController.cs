@@ -18,7 +18,7 @@ namespace FixItRight_API.Controllers
 		}
 
 		[HttpPost("customers")]
-		public async Task<IActionResult> RegisterCustomer([FromForm] UserForRegistrationDto userForRegistration)
+		public async Task<IActionResult> RegisterCustomer([FromBody] UserForRegistrationDto userForRegistration)
 		{
 			var result = await service.UserService.RegisterCustomer(userForRegistration);
 			if (!result.Succeeded)
@@ -35,7 +35,7 @@ namespace FixItRight_API.Controllers
 		}
 
 		[HttpPost("mechanists")]
-		public async Task<IActionResult> RegisterMechanist([FromForm] UserForRegistrationDto userForRegistration)
+		public async Task<IActionResult> RegisterMechanist([FromBody] UserForRegistrationDto userForRegistration)
 		{
 			var result = await service.UserService.RegisterMechanist(userForRegistration);
 			if (!result.Succeeded)
@@ -52,7 +52,7 @@ namespace FixItRight_API.Controllers
 		}
 
 		[HttpPost("login")]
-		public async Task<IActionResult> Authenticate([FromForm] UserForAuthenticationDto user)
+		public async Task<IActionResult> Authenticate([FromBody] UserForAuthenticationDto user)
 		{
 			if (!await service.UserService.ValidateUser(user))
 				return Unauthorized();
@@ -66,7 +66,7 @@ namespace FixItRight_API.Controllers
 
 		[HttpPost("refresh")]
 		[Authorize]
-		public async Task<IActionResult> Refresh([FromForm] TokenDto tokenDto)
+		public async Task<IActionResult> Refresh([FromBody] TokenDto tokenDto)
 		{
 			var tokenDtoToReturn = await service.UserService.RefreshToken(tokenDto);
 			return Ok(new

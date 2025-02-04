@@ -44,7 +44,7 @@ namespace FixItRight_API.Controllers
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[Authorize(Roles = $"{nameof(Role.Admin)}")]
-		public async Task<IActionResult> AddCategoryAsync([FromForm] CategoryForCreationDto categoryForCreation)
+		public async Task<IActionResult> AddCategoryAsync([FromBody] CategoryForCreationDto categoryForCreation)
 		{
 			var category = await serviceManager.CategoryService.AddCategoryAsync(categoryForCreation);
 			return CreatedAtAction(nameof(GetCategoryById), new { id = category.Id }, category);
@@ -54,7 +54,7 @@ namespace FixItRight_API.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[Authorize(Roles = $"{nameof(Role.Admin)}")]
-		public async Task<IActionResult> UpdateCategoryAsync([FromRoute] Guid id, [FromForm] CategoryForUpdateDto categoryForUpdate)
+		public async Task<IActionResult> UpdateCategoryAsync([FromRoute] Guid id, [FromBody] CategoryForUpdateDto categoryForUpdate)
 		{
 			await serviceManager.CategoryService.UpdateCategoryAsync(id, categoryForUpdate, true);
 			return NoContent();
