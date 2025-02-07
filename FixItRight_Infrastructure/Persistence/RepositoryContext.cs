@@ -1,5 +1,6 @@
 ﻿using FixItRight_Domain.Models;
 using FixItRight_Infrastructure.Configurations;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,9 +8,10 @@ namespace FixItRight_Infrastructure.Persistence
 {
 	public class RepositoryContext : IdentityDbContext<User>
 	{
+		private readonly UserManager<User> userManager;
+
 		public RepositoryContext(DbContextOptions option) : base(option)
 		{
-
 		}
 
 		protected override void OnModelCreating(ModelBuilder builder)
@@ -24,6 +26,7 @@ namespace FixItRight_Infrastructure.Persistence
 			builder.ApplyConfiguration(new RatingConfiguration());
 			builder.ApplyConfiguration(new TransactionConfiguration());
 			builder.ApplyConfiguration(new RoleConfiguration());
+			builder.ApplyConfiguration(new UserRoleConfiguration());
 
 		}
 

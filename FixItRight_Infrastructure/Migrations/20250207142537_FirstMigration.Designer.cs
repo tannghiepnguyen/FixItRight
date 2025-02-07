@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FixItRight_Infrastructure.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20250203163157_UpdateUser1")]
-    partial class UpdateUser1
+    [Migration("20250207142537_FirstMigration")]
+    partial class FirstMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -197,7 +197,7 @@ namespace FixItRight_Infrastructure.Migrations
                             Id = new Guid("cd7bdc7f-6e90-46fc-a9a3-f5fab0169851"),
                             Active = true,
                             CategoryId = new Guid("9ca4ae5b-c18d-4115-821f-3a28ed7a416f"),
-                            CreatedAt = new DateTime(2025, 2, 3, 23, 31, 57, 102, DateTimeKind.Local).AddTicks(9524),
+                            CreatedAt = new DateTime(2025, 2, 7, 21, 25, 37, 195, DateTimeKind.Local).AddTicks(6151),
                             Description = "Fridge Repair",
                             Image = "https://fixitright.blob.core.windows.net/fixitright/fridge.jpg",
                             Name = "Fridge Repair",
@@ -208,7 +208,7 @@ namespace FixItRight_Infrastructure.Migrations
                             Id = new Guid("85aa164a-a52c-4af3-95fd-29890f8df531"),
                             Active = true,
                             CategoryId = new Guid("9ca4ae5b-c18d-4115-821f-3a28ed7a416f"),
-                            CreatedAt = new DateTime(2025, 2, 3, 23, 31, 57, 102, DateTimeKind.Local).AddTicks(9542),
+                            CreatedAt = new DateTime(2025, 2, 7, 21, 25, 37, 195, DateTimeKind.Local).AddTicks(6184),
                             Description = "Air Condition Repair",
                             Image = "https://fixitright.blob.core.windows.net/fixitright/aircondition.jpg",
                             Name = "Air Condition Repair",
@@ -219,7 +219,7 @@ namespace FixItRight_Infrastructure.Migrations
                             Id = new Guid("c3266aac-f1b7-4d4a-afb1-8bb2dae6bc8f"),
                             Active = true,
                             CategoryId = new Guid("9ca4ae5b-c18d-4115-821f-3a28ed7a416f"),
-                            CreatedAt = new DateTime(2025, 2, 3, 23, 31, 57, 102, DateTimeKind.Local).AddTicks(9545),
+                            CreatedAt = new DateTime(2025, 2, 7, 21, 25, 37, 195, DateTimeKind.Local).AddTicks(6186),
                             Description = "Washing Machine Repair",
                             Image = "https://fixitright.blob.core.windows.net/fixitright/washing.jpg",
                             Name = "Washing Machine Repair",
@@ -230,7 +230,7 @@ namespace FixItRight_Infrastructure.Migrations
                             Id = new Guid("c9ff969c-4f3a-4c6c-877f-dd36f07189ed"),
                             Active = true,
                             CategoryId = new Guid("9ca4ae5b-c18d-4115-821f-3a28ed7a416f"),
-                            CreatedAt = new DateTime(2025, 2, 3, 23, 31, 57, 102, DateTimeKind.Local).AddTicks(9547),
+                            CreatedAt = new DateTime(2025, 2, 7, 21, 25, 37, 195, DateTimeKind.Local).AddTicks(6189),
                             Description = "TV Repair",
                             Image = "https://fixitright.blob.core.windows.net/fixitright/tv.jpg",
                             Name = "TV Repair",
@@ -241,7 +241,7 @@ namespace FixItRight_Infrastructure.Migrations
                             Id = new Guid("a838bccb-7786-462f-b4b0-018b9ce03560"),
                             Active = true,
                             CategoryId = new Guid("9ca4ae5b-c18d-4115-821f-3a28ed7a416f"),
-                            CreatedAt = new DateTime(2025, 2, 3, 23, 31, 57, 102, DateTimeKind.Local).AddTicks(9549),
+                            CreatedAt = new DateTime(2025, 2, 7, 21, 25, 37, 195, DateTimeKind.Local).AddTicks(6191),
                             Description = "Microwave Repair",
                             Image = "https://fixitright.blob.core.windows.net/fixitright/microwave.jpg",
                             Name = "Microwave Repair",
@@ -252,7 +252,7 @@ namespace FixItRight_Infrastructure.Migrations
                             Id = new Guid("8f19e546-a41d-488a-85df-558af0caf391"),
                             Active = true,
                             CategoryId = new Guid("9ca4ae5b-c18d-4115-821f-3a28ed7a416f"),
-                            CreatedAt = new DateTime(2025, 2, 3, 23, 31, 57, 102, DateTimeKind.Local).AddTicks(9553),
+                            CreatedAt = new DateTime(2025, 2, 7, 21, 25, 37, 195, DateTimeKind.Local).AddTicks(6193),
                             Description = "Oven Repair",
                             Image = "https://fixitright.blob.core.windows.net/fixitright/oven.jpg",
                             Name = "Oven Repair",
@@ -263,7 +263,7 @@ namespace FixItRight_Infrastructure.Migrations
                             Id = new Guid("ccf59cf8-77d1-4f1e-82cc-42ee70dc0362"),
                             Active = true,
                             CategoryId = new Guid("9ca4ae5b-c18d-4115-821f-3a28ed7a416f"),
-                            CreatedAt = new DateTime(2025, 2, 3, 23, 31, 57, 102, DateTimeKind.Local).AddTicks(9555),
+                            CreatedAt = new DateTime(2025, 2, 7, 21, 25, 37, 195, DateTimeKind.Local).AddTicks(6195),
                             Description = "Dishwasher Repair",
                             Image = "https://fixitright.blob.core.windows.net/fixitright/dishwasher.jpg",
                             Name = "Dishwasher Repair",
@@ -274,7 +274,7 @@ namespace FixItRight_Infrastructure.Migrations
                             Id = new Guid("23814aee-13c1-41e4-a80d-bb8882eb00b2"),
                             Active = true,
                             CategoryId = new Guid("150dcc51-3c46-4b48-bcbb-ec9bf217edfb"),
-                            CreatedAt = new DateTime(2025, 2, 3, 23, 31, 57, 102, DateTimeKind.Local).AddTicks(9557),
+                            CreatedAt = new DateTime(2025, 2, 7, 21, 25, 37, 195, DateTimeKind.Local).AddTicks(6198),
                             Description = "Pipe Repair",
                             Image = "https://fixitright.blob.core.windows.net/fixitright/pipe.jpg",
                             Name = "Pipe Repair",
@@ -285,7 +285,7 @@ namespace FixItRight_Infrastructure.Migrations
                             Id = new Guid("e21baed2-ac4d-4d91-af85-370f8ae5dd6c"),
                             Active = true,
                             CategoryId = new Guid("150dcc51-3c46-4b48-bcbb-ec9bf217edfb"),
-                            CreatedAt = new DateTime(2025, 2, 3, 23, 31, 57, 102, DateTimeKind.Local).AddTicks(9559),
+                            CreatedAt = new DateTime(2025, 2, 7, 21, 25, 37, 195, DateTimeKind.Local).AddTicks(6201),
                             Description = "Sink Repair",
                             Image = "https://fixitright.blob.core.windows.net/fixitright/sink.jpg",
                             Name = "Sink Repair",
@@ -296,7 +296,7 @@ namespace FixItRight_Infrastructure.Migrations
                             Id = new Guid("f5c248ee-d9e6-44d3-9b16-117ceb616b9e"),
                             Active = true,
                             CategoryId = new Guid("150dcc51-3c46-4b48-bcbb-ec9bf217edfb"),
-                            CreatedAt = new DateTime(2025, 2, 3, 23, 31, 57, 102, DateTimeKind.Local).AddTicks(9561),
+                            CreatedAt = new DateTime(2025, 2, 7, 21, 25, 37, 195, DateTimeKind.Local).AddTicks(6203),
                             Description = "Toilet Repair",
                             Image = "https://fixitright.blob.core.windows.net/fixitright/toilet.jpg",
                             Name = "Toilet Repair",
@@ -307,7 +307,7 @@ namespace FixItRight_Infrastructure.Migrations
                             Id = new Guid("3d32363b-dfa9-49ee-a6ac-8d3e7983294b"),
                             Active = true,
                             CategoryId = new Guid("150dcc51-3c46-4b48-bcbb-ec9bf217edfb"),
-                            CreatedAt = new DateTime(2025, 2, 3, 23, 31, 57, 102, DateTimeKind.Local).AddTicks(9564),
+                            CreatedAt = new DateTime(2025, 2, 7, 21, 25, 37, 195, DateTimeKind.Local).AddTicks(6205),
                             Description = "Shower Repair",
                             Image = "https://fixitright.blob.core.windows.net/fixitright/shower.jpg",
                             Name = "Shower Repair",
@@ -450,6 +450,31 @@ namespace FixItRight_Infrastructure.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "34e5bee4-75cb-423b-b8a3-58e5d0175989",
+                            AccessFailedCount = 0,
+                            Active = true,
+                            Address = "TPHCM",
+                            Avatar = "https://media.istockphoto.com/vectors/default-profile-picture-avatar-photo-placeholder-vector-illustration-vector-id1223671392?k=6&m=1223671392&s=170667a&w=0&h=zP3l7WJinOFaGb2i1F4g8IS2ylw0FlIaa6x3tP9sebU=",
+                            Birthday = new DateOnly(2002, 1, 23),
+                            ConcurrencyStamp = "5533a3f5-c61b-41d2-a1ef-105355c2621d",
+                            CreatedAt = new DateTime(2025, 2, 7, 21, 25, 37, 135, DateTimeKind.Local).AddTicks(9680),
+                            Email = "admin@gmail.com",
+                            EmailConfirmed = true,
+                            Fullname = "Admin",
+                            Gender = "Male",
+                            IsVerified = true,
+                            LockoutEnabled = false,
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAIAAYagAAAAEBBL4J7+BlkcrCLXeXA+qguVmyictCLQnWb6ZjbK0nPoI3MY8ZJR50J4Y5h6kfoOIg==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "79e37545-d16a-412d-ae35-05f55c8b5b60",
+                            TwoFactorEnabled = false,
+                            UserName = "admin"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -584,6 +609,13 @@ namespace FixItRight_Infrastructure.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "34e5bee4-75cb-423b-b8a3-58e5d0175989",
+                            RoleId = "a0bf18ce-48d8-4f97-820e-97b5af1974c8"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
