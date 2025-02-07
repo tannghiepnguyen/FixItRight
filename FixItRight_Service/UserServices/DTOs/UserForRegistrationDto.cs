@@ -14,6 +14,6 @@ namespace FixItRight_Service.UserServices.DTOs
 		[Required]
 		public string Password { get; init; }
 		[Required]
-		public string PhoneNumber { get; init; }
+		public string Email { get; init; }
 	}
 }

@@ -3,9 +3,13 @@ using FixItRight_Domain.Constants;
 using FixItRight_Domain.Exceptions;
 using FixItRight_Domain.Models;
 using FixItRight_Domain.RequestFeatures;
+using FixItRight_Service.EmailServices;
+using FixItRight_Service.EmailServices.DTOs;
 using FixItRight_Service.IServices;
 using FixItRight_Service.UserServices.DTOs;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -22,15 +26,19 @@ namespace FixItRight_Service.UserServices
 		private readonly UserManager<User> userManager;
 		private readonly IConfiguration configuration;
 		private readonly IBlobService blobService;
+		private readonly IHttpContextAccessor httpContextAccessor;
+		private readonly IEmailSender emailSender;
 		private User? user;
 
-		public UserService(ILoggerManager logger, IMapper mapper, UserManager<User> userManager, IConfiguration configuration, IBlobService blobService)
+		public UserService(ILoggerManager logger, IMapper mapper, UserManager<User> userManager, IConfiguration configuration, IBlobService blobService, IHttpContextAccessor httpContextAccessor, IEmailSender emailSender)
 		{
 			this.logger = logger;
 			this.mapper = mapper;
 			this.userManager = userManager;
 			this.configuration = configuration;
 			this.blobService = blobService;
+			this.httpContextAccessor = httpContextAccessor;
+			this.emailSender = emailSender;
 		}
 		public async Task<IdentityResult> RegisterCustomer(UserForRegistrationDto userForRegistration)
 		{
@@ -46,6 +54,17 @@ namespace FixItRight_Service.UserServices
 			{
 				await userManager.AddToRoleAsync(user, Role.Customer.ToString());
 			}
+
+			var param = new Dictionary<string, string>
+			{
+				{ "token", await userManager.GenerateEmailConfirmationTokenAsync(user) },
+				{ "email", user.Email }
+			};
+			var request = httpContextAccessor.HttpContext?.Request;
+			var uri = $"{request?.Scheme}://{request?.Host}/api/authentications/email-verification";
+			var callback = QueryHelpers.AddQueryString(uri, param);
+			var mail = new Mail(user.Email, "Email verification", $"<p>Please click <a href='{callback}'>here</a> to verify your email</p>");
+			emailSender.SendEmail(mail);
 			return result;
 		}
 
@@ -61,6 +80,17 @@ namespace FixItRight_Service.UserServices
 			var result = await userManager.CreateAsync(user, userForRegistration.Password!);
 			if (result.Succeeded)
 				await userManager.AddToRoleAsync(user, Role.Mechanist.ToString());
+
+			var param = new Dictionary<string, string>
+			{
+				{ "token", await userManager.GenerateEmailConfirmationTokenAsync(user) },
+				{ "email", user.Email }
+			};
+			var request = httpContextAccessor.HttpContext?.Request;
+			var uri = $"{request?.Scheme}://{request?.Host}/api/authentications/email-verification";
+			var callback = QueryHelpers.AddQueryString(uri, param);
+			var mail = new Mail(user.Email, "Email verification", $"<p>Please click <a href='{callback}'>here</a> to verify your email</p>");
+			emailSender.SendEmail(mail);
 			return result;
 		}
 
@@ -74,6 +104,10 @@ namespace FixItRight_Service.UserServices
 			if (!user.Active)
 			{
 				throw new NotAuthenticatedException("User is deactivated");
+			}
+			if (!user.EmailConfirmed)
+			{
+				throw new NotAuthenticatedException("Email is not verified");
 			}
 			var result = (user != null && await userManager.CheckPasswordAsync(user, userForAuth.Password!) && user.Active);
 			return result;
@@ -291,6 +325,12 @@ namespace FixItRight_Service.UserServices
 			if (user is null) throw new UserNotFoundException(userId);
 
 			return await userManager.ChangePasswordAsync(user, userForUpdatePasswordDto.OldPassword, userForUpdatePasswordDto.NewPassword);
+		}
+
+		public async Task<IdentityResult> ConfirmEmail(string token, string email)
+		{
+			var user = await userManager.FindByEmailAsync(email);
+			return await userManager.ConfirmEmailAsync(user, token);
 		}
 	}
 }

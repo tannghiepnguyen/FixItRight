@@ -54,7 +54,7 @@ namespace FixItRight_API.Controllers
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[Authorize(Roles = $"{nameof(Role.Admin)}")]
-		public async Task<IActionResult> AddRepairServiceAsync([FromBody] ServiceForCreationDto repairService)
+		public async Task<IActionResult> AddRepairServiceAsync([FromForm] ServiceForCreationDto repairService)
 		{
 			var service = await serviceManager.RepairServiceService.AddRepairServiceAsync(repairService);
 			return CreatedAtAction(nameof(GetRepairServiceById), new { id = service.Id }, service);
@@ -65,7 +65,7 @@ namespace FixItRight_API.Controllers
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[Authorize(Roles = $"{nameof(Role.Admin)}")]
-		public async Task<IActionResult> UpdateRepairServiceAsync([FromRoute] Guid id, [FromBody] ServiceForUpdateDto repairService)
+		public async Task<IActionResult> UpdateRepairServiceAsync([FromRoute] Guid id, [FromForm] ServiceForUpdateDto repairService)
 		{
 			await serviceManager.RepairServiceService.UpdateRepairServiceAsync(id, repairService, true);
 			return NoContent();

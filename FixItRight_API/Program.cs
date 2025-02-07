@@ -1,6 +1,8 @@
+using Azure.Identity;
 using FixItRight_API;
 using FixItRight_API.Extension;
 using FixItRight_Service.ChatServices;
+using FixItRight_Service.EmailServices;
 using FixItRight_Service.Extensions;
 using FixItRight_Service.TransactionServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -51,6 +53,13 @@ builder.Services.AddSwaggerGen(option =>
 		}
 	});
 });
+
+//Azure Key Vault
+var keyVaultUrl = new Uri(builder.Configuration.GetSection("KeyVaultUrl").Value!);
+var azureCredential = new DefaultAzureCredential();
+builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredential);
+
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 builder.Services.AddProblemDetails();
 builder.Services.ConfigureDatabase(builder.Configuration);
 builder.Services.AddAuthentication();

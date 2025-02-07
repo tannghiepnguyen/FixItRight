@@ -52,7 +52,7 @@ namespace FixItRight_API.Controllers
 		[HttpPut("{id}")]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[Authorize]
-		public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UserForUpdateDto userForUpdate)
+		public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromForm] UserForUpdateDto userForUpdate)
 		{
 			var user = await service.UserService.UpdateUser(id, userForUpdate);
 			return NoContent();

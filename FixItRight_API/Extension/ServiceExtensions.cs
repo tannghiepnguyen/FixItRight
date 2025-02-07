@@ -24,6 +24,7 @@ namespace FixItRight_API.Extension
 				o.Password.RequireUppercase = false;
 				o.Password.RequireNonAlphanumeric = false;
 				o.Password.RequiredLength = 5;
+				o.User.RequireUniqueEmail = true;
 			})
 			.AddEntityFrameworkStores<RepositoryContext>()
 			.AddDefaultTokenProviders();

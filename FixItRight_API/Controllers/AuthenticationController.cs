@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FixItRight_API.Controllers
 {
-	[Route("api/authentication")]
+	[Route("api/authentications")]
 	[ApiController]
 	public class AuthenticationController : ControllerBase
 	{
@@ -85,6 +85,23 @@ namespace FixItRight_API.Controllers
 			{
 				data = user
 			});
+		}
+
+		[HttpGet("email-verification")]
+		public async Task<IActionResult> ConfirmEmail([FromQuery] string token, [FromQuery] string email)
+		{
+			var result = await service.UserService.ConfirmEmail(token, email);
+			if (!result.Succeeded)
+			{
+				CustomError customError = new CustomError();
+				foreach (var error in result.Errors)
+				{
+					customError.Errors.Add(error);
+				}
+				customError.Message = "Email verification failed";
+				return BadRequest(customError);
+			}
+			return Ok("Email has been verified successfully");
 		}
 	}
 }
