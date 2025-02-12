@@ -7,8 +7,8 @@ namespace FixItRight_Service.RepairServiceServices.DTOs
 	{
 		public ServiceProfile()
 		{
-			CreateMap<ServiceForCreationDto, Service>().ForSourceMember(c => c.File, opt => opt.DoNotValidate());
-			CreateMap<ServiceForUpdateDto, Service>().ForSourceMember(c => c.File, opt => opt.DoNotValidate());
+			CreateMap<ServiceForCreationDto, Service>();
+			CreateMap<ServiceForUpdateDto, Service>();
 			CreateMap<Service, ServiceForReturnDto>();
 		}
 	}

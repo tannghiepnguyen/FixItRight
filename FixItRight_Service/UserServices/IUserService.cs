@@ -19,5 +19,7 @@ namespace FixItRight_Service.UserServices
 		Task<IdentityResult> VerifyUser(string userId);
 		Task<IdentityResult> UpdateUserPassword(string userId, UserForUpdatePasswordDto userForUpdatePasswordDto);
 		Task<IdentityResult> ConfirmEmail(string token, string email);
+		Task SendResetPasswordToken(string email, CancellationToken ct = default);
+		Task ResetPassword(UserForResetPasswordDto userForResetPasswordDto, CancellationToken ct = default);
 	}
 }

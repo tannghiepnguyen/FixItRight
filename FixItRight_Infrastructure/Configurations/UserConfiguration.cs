@@ -24,6 +24,8 @@ namespace FixItRight_Infrastructure.Configurations
 			builder.Property(u => u.CccdBack);
 			builder.Property(u => u.CreatedAt).IsRequired();
 			builder.Property(u => u.UpdatedAt);
+			builder.Property(u => u.PasswordResetToken);
+			builder.Property(u => u.PasswordResetTokenExpiryTime);
 			builder.Property(u => u.Address);
 			builder.HasMany(u => u.Chats).WithOne(c => c.Sender).HasForeignKey(c => c.SenderId).OnDelete(DeleteBehavior.NoAction);
 			builder.HasMany(u => u.CustomerBookings).WithOne(b => b.Customer).HasForeignKey(b => b.CustomerId).OnDelete(DeleteBehavior.NoAction);

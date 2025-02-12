@@ -1,5 +1,4 @@
 ﻿using FixItRight_Domain.Constants;
-using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace FixItRight_Service.UserServices.DTOs
@@ -17,8 +16,8 @@ namespace FixItRight_Service.UserServices.DTOs
 		public string? Address { get; set; }
 		[Required]
 		public string PhoneNumber { get; init; }
-		public IFormFile? CccdFront { get; init; }
-		public IFormFile? CccdBack { get; init; }
-		public IFormFile? Avatar { get; init; }
+		public string? CccdFront { get; init; }
+		public string? CccdBack { get; init; }
+		public string? Avatar { get; init; }
 	}
 }

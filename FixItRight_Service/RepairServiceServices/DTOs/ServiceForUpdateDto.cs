@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FixItRight_Service.RepairServiceServices.DTOs
 {
 	public record ServiceForUpdateDto
 	{
-		public IFormFile? File { get; init; }
+		public string? File { get; init; }
 		[Required]
 		public string Name { get; init; }
 		[Required]

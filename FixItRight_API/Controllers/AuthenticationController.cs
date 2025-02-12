@@ -103,5 +103,19 @@ namespace FixItRight_API.Controllers
 			}
 			return Ok("Email has been verified successfully");
 		}
+
+		[HttpPost("password-forgeting")]
+		public async Task<IActionResult> SendResetPasswordToken([FromForm] string email, CancellationToken ct)
+		{
+			await service.UserService.SendResetPasswordToken(email, ct);
+			return Ok("The OTP has been sent to your email");
+		}
+
+		[HttpPut("password-forgeting")]
+		public async Task<IActionResult> ResetPassword([FromBody] UserForResetPasswordDto userForResetPasswordDto, CancellationToken ct)
+		{
+			await service.UserService.ResetPassword(userForResetPasswordDto, ct);
+			return Ok();
+		}
 	}
 }

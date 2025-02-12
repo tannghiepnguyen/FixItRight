@@ -181,6 +181,13 @@ namespace FixItRight_Service.UserServices
 			}
 		}
 
+		private string GenerateOTP()
+		{
+			Random random = new Random();
+			int otp = random.Next(100000, 999999);
+			return otp.ToString();
+		}
+
 		private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
 		{
 			var jwtSettings = configuration.GetSection("JwtSettings");
@@ -273,25 +280,7 @@ namespace FixItRight_Service.UserServices
 			if (user is null) throw new UserNotFoundException(userId);
 
 			mapper.Map(userForUpdate, user);
-			user.UpdatedAt = DateTime.UtcNow;
-			if (userForUpdate.Avatar is not null && userForUpdate.Avatar.Length > 0)
-			{
-				await blobService.DeleteBlob(user.Avatar.Split('/').Last(), StorageContainer.STORAGE_CONTAINER);
-				string filename = $"{userId + "_avatar"}{Path.GetExtension(userForUpdate.Avatar.FileName)}";
-				user.Avatar = await blobService.UploadBlob(filename, StorageContainer.STORAGE_CONTAINER, userForUpdate.Avatar);
-			}
-			if (userForUpdate.CccdFront is not null && userForUpdate.CccdFront.Length > 0)
-			{
-				await blobService.DeleteBlob(user.CccdFront.Split('/').Last(), StorageContainer.STORAGE_CONTAINER);
-				string filename = $"{userId + "_front"}{Path.GetExtension(userForUpdate.CccdFront.FileName)}";
-				user.CccdFront = await blobService.UploadBlob(filename, StorageContainer.STORAGE_CONTAINER, userForUpdate.CccdFront);
-			}
-			if (userForUpdate.CccdBack is not null && userForUpdate.CccdBack.Length > 0)
-			{
-				await blobService.DeleteBlob(user.CccdBack.Split('/').Last(), StorageContainer.STORAGE_CONTAINER);
-				string filename = $"{userId + "_back"}{Path.GetExtension(userForUpdate.CccdBack.FileName)}";
-				user.CccdBack = await blobService.UploadBlob(filename, StorageContainer.STORAGE_CONTAINER, userForUpdate.CccdBack);
-			}
+			user.UpdatedAt = DateTime.Now;
 
 			return await userManager.UpdateAsync(user);
 		}
@@ -331,6 +320,34 @@ namespace FixItRight_Service.UserServices
 		{
 			var user = await userManager.FindByEmailAsync(email);
 			return await userManager.ConfirmEmailAsync(user, token);
+		}
+
+		public async Task SendResetPasswordToken(string email, CancellationToken ct = default)
+		{
+			var userEntity = await userManager.FindByEmailAsync(email);
+			if (userEntity is null) throw new UserNotFoundException(userEntity.Id);
+
+			userEntity.PasswordResetToken = GenerateOTP();
+			userEntity.PasswordResetTokenExpiryTime = DateTime.Now.AddHours(1);
+
+			await userManager.UpdateAsync(userEntity);
+
+			var mail = new Mail(userEntity.Email, "Reset password OTP", $"<p>Your reset password OTP is: <i>{userEntity.PasswordResetToken}</i></p>");
+			emailSender.SendEmail(mail);
+		}
+
+		public async Task ResetPassword(UserForResetPasswordDto userForResetPasswordDto, CancellationToken ct = default)
+		{
+			var userEntity = await userManager.FindByEmailAsync(userForResetPasswordDto.Email);
+			if (userEntity is null || userEntity.PasswordResetToken != userForResetPasswordDto.Token || userEntity.PasswordResetTokenExpiryTime <= DateTime.Now)
+			{
+				throw new RequestTokenBadRequest();
+			}
+
+			userEntity.PasswordHash = new PasswordHasher<User>().HashPassword(userEntity, userForResetPasswordDto.Password);
+			userEntity.PasswordResetToken = null;
+			userEntity.PasswordResetTokenExpiryTime = null;
+			await userManager.UpdateAsync(userEntity);
 		}
 	}
 }
