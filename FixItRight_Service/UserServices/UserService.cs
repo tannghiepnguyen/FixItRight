@@ -6,12 +6,14 @@ using FixItRight_Domain.RequestFeatures;
 using FixItRight_Service.EmailServices;
 using FixItRight_Service.EmailServices.DTOs;
 using FixItRight_Service.IServices;
+using FixItRight_Service.Jobs;
 using FixItRight_Service.UserServices.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Quartz;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -28,9 +30,10 @@ namespace FixItRight_Service.UserServices
 		private readonly IBlobService blobService;
 		private readonly IHttpContextAccessor httpContextAccessor;
 		private readonly IEmailSender emailSender;
+		private readonly ISchedulerFactory schedulerFactory;
 		private User? user;
 
-		public UserService(ILoggerManager logger, IMapper mapper, UserManager<User> userManager, IConfiguration configuration, IBlobService blobService, IHttpContextAccessor httpContextAccessor, IEmailSender emailSender)
+		public UserService(ILoggerManager logger, IMapper mapper, UserManager<User> userManager, IConfiguration configuration, IBlobService blobService, IHttpContextAccessor httpContextAccessor, IEmailSender emailSender, ISchedulerFactory schedulerFactory)
 		{
 			this.logger = logger;
 			this.mapper = mapper;
@@ -39,6 +42,7 @@ namespace FixItRight_Service.UserServices
 			this.blobService = blobService;
 			this.httpContextAccessor = httpContextAccessor;
 			this.emailSender = emailSender;
+			this.schedulerFactory = schedulerFactory;
 		}
 		public async Task<IdentityResult> RegisterCustomer(UserForRegistrationDto userForRegistration)
 		{
@@ -63,8 +67,21 @@ namespace FixItRight_Service.UserServices
 			var request = httpContextAccessor.HttpContext?.Request;
 			var uri = $"{request?.Scheme}://{request?.Host}/api/authentications/email-verification";
 			var callback = QueryHelpers.AddQueryString(uri, param);
-			var mail = new Mail(user.Email, "Email verification", $"<p>Please click <a href='{callback}'>here</a> to verify your email</p>");
-			emailSender.SendEmail(mail);
+			IJobDetail job = JobBuilder.Create<EmailSendingJob>()
+			.WithIdentity("emailJob", "group1")
+			.UsingJobData("to", user.Email)
+			.UsingJobData("subject", "Email verification")
+			.UsingJobData("body", $"<p>Please click <a href='{callback}'>here</a> to verify your email</p>")
+			.Build();
+
+			ITrigger trigger = TriggerBuilder.Create()
+		   .WithIdentity("emailTrigger", "group1")
+		   .StartNow()
+		   .Build();
+
+			var scheduler = await schedulerFactory.GetScheduler();
+
+			await scheduler.ScheduleJob(job, trigger);
 			return result;
 		}
 
@@ -89,8 +106,21 @@ namespace FixItRight_Service.UserServices
 			var request = httpContextAccessor.HttpContext?.Request;
 			var uri = $"{request?.Scheme}://{request?.Host}/api/authentications/email-verification";
 			var callback = QueryHelpers.AddQueryString(uri, param);
-			var mail = new Mail(user.Email, "Email verification", $"<p>Please click <a href='{callback}'>here</a> to verify your email</p>");
-			emailSender.SendEmail(mail);
+			IJobDetail job = JobBuilder.Create<EmailSendingJob>()
+			.WithIdentity("emailJob", "group1")
+			.UsingJobData("to", user.Email)
+			.UsingJobData("subject", "Email verification")
+			.UsingJobData("body", $"<p>Please click <a href='{callback}'>here</a> to verify your email</p>")
+			.Build();
+
+			ITrigger trigger = TriggerBuilder.Create()
+		   .WithIdentity("emailTrigger", "group1")
+		   .StartNow()
+		   .Build();
+
+			var scheduler = await schedulerFactory.GetScheduler();
+
+			await scheduler.ScheduleJob(job, trigger);
 			return result;
 		}
 
@@ -334,6 +364,22 @@ namespace FixItRight_Service.UserServices
 
 			var mail = new Mail(userEntity.Email, "Reset password OTP", $"<p>Your reset password OTP is: <i>{userEntity.PasswordResetToken}</i></p>");
 			emailSender.SendEmail(mail);
+
+			IJobDetail job = JobBuilder.Create<EmailSendingJob>()
+			.WithIdentity("emailJob", "group1")
+			.UsingJobData("to", userEntity.Email)
+			.UsingJobData("subject", "Reset password OTP")
+			.UsingJobData("body", $"<p>Your reset password OTP is: <i>{userEntity.PasswordResetToken}</i></p>")
+			.Build();
+
+			ITrigger trigger = TriggerBuilder.Create()
+		   .WithIdentity("emailTrigger", "group1")
+		   .StartNow()
+		   .Build();
+
+			var scheduler = await schedulerFactory.GetScheduler(ct);
+
+			await scheduler.ScheduleJob(job, trigger, ct);
 		}
 
 		public async Task ResetPassword(UserForResetPasswordDto userForResetPasswordDto, CancellationToken ct = default)

@@ -9,12 +9,25 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Quartz;
+using Quartz.Simpl;
 using System.Text;
 
 namespace FixItRight_API.Extension
 {
 	public static class ServiceExtensions
 	{
+		public static void ConfigureQuartz(this IServiceCollection services)
+		{
+			services.AddQuartz(q =>
+			{
+				q.UseJobFactory<MicrosoftDependencyInjectionJobFactory>();
+			});
+			services.AddQuartzHostedService(opt =>
+			{
+				opt.WaitForJobsToComplete = true;
+			});
+		}
 		public static void ConfigureIdentity(this IServiceCollection services)
 		{
 			var builder = services.AddIdentity<User, IdentityRole>(o =>

@@ -6,6 +6,8 @@ using FixItRight_Domain.Repositories;
 using FixItRight_Domain.RequestFeatures;
 using FixItRight_Service.BookingServices.DTOs;
 using FixItRight_Service.IServices;
+using FixItRight_Service.TransactionServices;
+using Microsoft.Extensions.Configuration;
 
 namespace FixItRight_Service.BookingServices
 {
@@ -14,6 +16,8 @@ namespace FixItRight_Service.BookingServices
 		private readonly IRepositoryManager repositoryManager;
 		private readonly ILoggerManager logger;
 		private readonly IMapper mapper;
+		private readonly IConfiguration configuration;
+		private readonly Utils utils;
 
 		private async Task<Booking> CheckBookingExist(Guid bookingId, bool trackChange)
 		{
@@ -22,20 +26,50 @@ namespace FixItRight_Service.BookingServices
 			return booking;
 		}
 
-		public BookingService(IRepositoryManager repositoryManager, ILoggerManager logger, IMapper mapper)
+		public BookingService(IRepositoryManager repositoryManager, ILoggerManager logger, IMapper mapper, IConfiguration configuration, Utils utils)
 		{
 			this.repositoryManager = repositoryManager;
 			this.logger = logger;
 			this.mapper = mapper;
+			this.configuration = configuration;
+			this.utils = utils;
 		}
-		public async Task<BookingForReturnDto> CreateBooking(BookingForCreationDto bookingForCreationDto)
+		public async Task<string> CreateBooking(BookingForCreationDto bookingForCreationDto)
 		{
 			var booking = mapper.Map<Booking>(bookingForCreationDto);
+			booking.Id = Guid.NewGuid();
 			booking.Status = BookingStatus.Pending;
 			booking.BookingDate = DateTime.Now;
 			repositoryManager.BookingRepository.CreateBooking(booking);
+
+			var transaction = new Transaction
+			{
+				Id = Guid.NewGuid(),
+				Amount = booking.Service.Price,
+				CreatedAt = DateTime.Now,
+				Status = TransactionStatus.Pending,
+				BookingId = booking.Id,
+				UserId = booking.CustomerId
+			};
+			repositoryManager.TransactionRepository.CreateTransaction(transaction);
+
 			await repositoryManager.SaveAsync();
-			return mapper.Map<BookingForReturnDto>(booking);
+
+			var vnpay = new VnPayLibrary();
+			vnpay.AddRequestData("vnp_Version", "2.1.0");
+			vnpay.AddRequestData("vnp_Command", "pay");
+			vnpay.AddRequestData("vnp_TmnCode", configuration.GetSection("VNPay").GetSection("TmnCode").Value);
+			vnpay.AddRequestData("vnp_Amount", (transaction.Amount * 100).ToString());
+			vnpay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
+			vnpay.AddRequestData("vnp_CurrCode", "VND");
+			vnpay.AddRequestData("vnp_IpAddr", utils.GetIpAddress());
+			vnpay.AddRequestData("vnp_Locale", "vn");
+			vnpay.AddRequestData("vnp_OrderType", "other");
+			vnpay.AddRequestData("vnp_OrderInfo", $"Payment for order {transaction.Id}");
+			vnpay.AddRequestData("vnp_ReturnUrl", configuration.GetSection("VNPay").GetSection("ReturnUrlMobile").Value);
+			vnpay.AddRequestData("vnp_TxnRef", transaction.Id.ToString());
+			var paymentUrl = vnpay.CreateRequestUrl(configuration.GetSection("VNPay").GetSection("Url").Value, configuration.GetSection("VNPay").GetSection("HashSecret").Value);
+			return paymentUrl;
 		}
 
 		public async Task<BookingForReturnDto?> GetBookingById(Guid bookingId, bool trackChange)

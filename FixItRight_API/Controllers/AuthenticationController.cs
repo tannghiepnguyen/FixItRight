@@ -101,11 +101,11 @@ namespace FixItRight_API.Controllers
 				customError.Message = "Email verification failed";
 				return BadRequest(customError);
 			}
-			return Ok("Email has been verified successfully");
+			return Redirect("https://fix-it-right.vercel.app/verify");
 		}
 
 		[HttpPost("password-forgeting")]
-		public async Task<IActionResult> SendResetPasswordToken([FromForm] string email, CancellationToken ct)
+		public async Task<IActionResult> SendResetPasswordToken([FromBody] string email, CancellationToken ct)
 		{
 			await service.UserService.SendResetPasswordToken(email, ct);
 			return Ok("The OTP has been sent to your email");

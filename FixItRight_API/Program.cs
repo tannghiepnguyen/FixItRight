@@ -60,6 +60,7 @@ var azureCredential = new DefaultAzureCredential();
 builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredential);
 
 builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.ConfigureQuartz();
 builder.Services.AddProblemDetails();
 builder.Services.ConfigureDatabase(builder.Configuration);
 builder.Services.AddAuthentication();

@@ -85,13 +85,13 @@ namespace FixItRight_API.Controllers
 		}
 
 		[HttpPost]
-		[ProducesResponseType(StatusCodes.Status201Created)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[Authorize(Roles = $"{nameof(Role.Customer)}")]
-		public async Task<IActionResult> CreateBooking([FromForm] BookingForCreationDto booking)
+		public async Task<IActionResult> CreateBooking([FromBody] BookingForCreationDto booking)
 		{
-			var newBooking = await serviceManager.BookingService.CreateBooking(booking);
-			return CreatedAtAction(nameof(GetBooking), new { id = newBooking.Id }, newBooking);
+			var paymentUrl = await serviceManager.BookingService.CreateBooking(booking);
+			return Ok(new { data = paymentUrl });
 		}
 
 		[HttpPut("{id:guid}")]
@@ -99,7 +99,7 @@ namespace FixItRight_API.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[Authorize(Roles = $"{nameof(Role.Customer)}, {nameof(Role.Mechanist)}")]
-		public async Task<IActionResult> UpdateBooking(Guid id, [FromForm] BookingForUpdateDto booking)
+		public async Task<IActionResult> UpdateBooking(Guid id, [FromBody] BookingForUpdateDto booking)
 		{
 			await serviceManager.BookingService.UpdateBooking(id, booking, true);
 			return NoContent();

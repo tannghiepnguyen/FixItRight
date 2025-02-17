@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
+using Quartz;
 
 namespace FixItRight_Service.Services
 {
@@ -26,12 +27,12 @@ namespace FixItRight_Service.Services
 		private readonly Lazy<ITransactionService> transactionService;
 		private readonly Lazy<IChatService> chatService;
 		private readonly Lazy<ICategoryService> categoryService;
-		public ServiceManager(IRepositoryManager repositoryManager, ILoggerManager logger, IMapper mapper, UserManager<User> userManager, IConfiguration configuration, IBlobService blobService, Utils utils, IHubContext<MessageHub> hubContext, IHttpContextAccessor httpContextAccessor, IEmailSender emailSender)
+		public ServiceManager(IRepositoryManager repositoryManager, ILoggerManager logger, IMapper mapper, UserManager<User> userManager, IConfiguration configuration, IBlobService blobService, Utils utils, IHubContext<MessageHub> hubContext, IHttpContextAccessor httpContextAccessor, IEmailSender emailSender, ISchedulerFactory schedulerFactory)
 		{
-			userService = new Lazy<IUserService>(() => new UserService(logger, mapper, userManager, configuration, blobService, httpContextAccessor, emailSender));
+			userService = new Lazy<IUserService>(() => new UserService(logger, mapper, userManager, configuration, blobService, httpContextAccessor, emailSender, schedulerFactory));
 			repairServiceService = new Lazy<IRepairServiceService>(() => new RepairServiceService(repositoryManager, logger, mapper, blobService));
 			ratingService = new Lazy<IRatingService>(() => new RatingService(repositoryManager, logger, mapper));
-			bookingService = new Lazy<IBookingService>(() => new BookingService(repositoryManager, logger, mapper));
+			bookingService = new Lazy<IBookingService>(() => new BookingService(repositoryManager, logger, mapper, configuration, utils));
 			transactionService = new Lazy<ITransactionService>(() => new TransactionService(repositoryManager, logger, mapper, userManager, utils, configuration));
 			chatService = new Lazy<IChatService>(() => new ChatService(repositoryManager, logger, mapper, hubContext));
 			categoryService = new Lazy<ICategoryService>(() => new CategoryService(repositoryManager, logger, mapper));

@@ -66,14 +66,14 @@ namespace FixItRight_API.Controllers
 			});
 		}
 
-		[HttpPost]
-		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Roles = $"{nameof(Role.Customer)}")]
-		public async Task<IActionResult> CreateTransaction([FromBody] TransactionForCreationDto transaction)
-		{
-			var paymentUrl = await serviceManager.TransactionService.CreateTransaction(transaction);
-			return Ok(new { data = paymentUrl });
-		}
+		//[HttpPost]
+		//[ProducesResponseType(StatusCodes.Status200OK)]
+		//[Authorize(Roles = $"{nameof(Role.Customer)}")]
+		//public async Task<IActionResult> CreateTransaction([FromBody] TransactionForCreationDto transaction)
+		//{
+		//	var paymentUrl = await serviceManager.TransactionService.CreateTransaction(transaction);
+		//	return Ok(new { data = paymentUrl });
+		//}
 
 		[HttpGet("ipn")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
