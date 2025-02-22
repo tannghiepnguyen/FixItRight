@@ -7,6 +7,7 @@ using FixItRight_Domain.RequestFeatures;
 using FixItRight_Service.BookingServices.DTOs;
 using FixItRight_Service.IServices;
 using FixItRight_Service.TransactionServices;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
 namespace FixItRight_Service.BookingServices
@@ -18,6 +19,7 @@ namespace FixItRight_Service.BookingServices
 		private readonly IMapper mapper;
 		private readonly IConfiguration configuration;
 		private readonly Utils utils;
+		private readonly UserManager<User> userManager;
 
 		private async Task<Booking> CheckBookingExist(Guid bookingId, bool trackChange)
 		{
@@ -26,50 +28,40 @@ namespace FixItRight_Service.BookingServices
 			return booking;
 		}
 
-		public BookingService(IRepositoryManager repositoryManager, ILoggerManager logger, IMapper mapper, IConfiguration configuration, Utils utils)
+		public BookingService(IRepositoryManager repositoryManager, ILoggerManager logger, IMapper mapper, IConfiguration configuration, Utils utils, UserManager<User> userManager)
 		{
 			this.repositoryManager = repositoryManager;
 			this.logger = logger;
 			this.mapper = mapper;
 			this.configuration = configuration;
 			this.utils = utils;
+			this.userManager = userManager;
 		}
-		public async Task<string> CreateBooking(BookingForCreationDto bookingForCreationDto)
+		private async Task<User> GetRandomMechanist()
 		{
+			var mechanists = await userManager.GetUsersInRoleAsync(Role.Mechanist.ToString());
+			var random = new Random();
+			var randomMechanist = mechanists.ElementAt(random.Next(mechanists.Count));
+			return randomMechanist;
+		}
+		public async Task CreateBooking(BookingForCreationDto bookingForCreationDto)
+		{
+			var service = await repositoryManager.RepairService.GetRepairServiceByIdAsync(bookingForCreationDto.ServiceId, false);
+
+			var user = await userManager.FindByIdAsync(bookingForCreationDto.CustomerId);
+			if (user.Balance < service.Price) throw new NotEnoughMoneyException("You don't have enough money to use service");
+
 			var booking = mapper.Map<Booking>(bookingForCreationDto);
 			booking.Id = Guid.NewGuid();
 			booking.Status = BookingStatus.Pending;
 			booking.BookingDate = DateTime.Now;
+			booking.MechanistId = (await GetRandomMechanist()).Id;
 			repositoryManager.BookingRepository.CreateBooking(booking);
 
-			var transaction = new Transaction
-			{
-				Id = Guid.NewGuid(),
-				Amount = booking.Service.Price,
-				CreatedAt = DateTime.Now,
-				Status = TransactionStatus.Pending,
-				BookingId = booking.Id,
-				UserId = booking.CustomerId
-			};
-			repositoryManager.TransactionRepository.CreateTransaction(transaction);
+			user.Balance -= service.Price;
+			await userManager.UpdateAsync(user);
 
 			await repositoryManager.SaveAsync();
-
-			var vnpay = new VnPayLibrary();
-			vnpay.AddRequestData("vnp_Version", "2.1.0");
-			vnpay.AddRequestData("vnp_Command", "pay");
-			vnpay.AddRequestData("vnp_TmnCode", configuration.GetSection("VNPay").GetSection("TmnCode").Value);
-			vnpay.AddRequestData("vnp_Amount", (transaction.Amount * 100).ToString());
-			vnpay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
-			vnpay.AddRequestData("vnp_CurrCode", "VND");
-			vnpay.AddRequestData("vnp_IpAddr", utils.GetIpAddress());
-			vnpay.AddRequestData("vnp_Locale", "vn");
-			vnpay.AddRequestData("vnp_OrderType", "other");
-			vnpay.AddRequestData("vnp_OrderInfo", $"Payment for order {transaction.Id}");
-			vnpay.AddRequestData("vnp_ReturnUrl", configuration.GetSection("VNPay").GetSection("ReturnUrlMobile").Value);
-			vnpay.AddRequestData("vnp_TxnRef", transaction.Id.ToString());
-			var paymentUrl = vnpay.CreateRequestUrl(configuration.GetSection("VNPay").GetSection("Url").Value, configuration.GetSection("VNPay").GetSection("HashSecret").Value);
-			return paymentUrl;
 		}
 
 		public async Task<BookingForReturnDto?> GetBookingById(Guid bookingId, bool trackChange)
@@ -81,6 +73,13 @@ namespace FixItRight_Service.BookingServices
 		public async Task UpdateBooking(Guid bookingId, BookingForUpdateDto bookingForUpdateDto, bool trackChange)
 		{
 			var booking = await CheckBookingExist(bookingId, trackChange);
+			var service = await repositoryManager.RepairService.GetRepairServiceByIdAsync(booking.ServiceId, false);
+			var user = await userManager.FindByIdAsync(booking.CustomerId);
+			if (bookingForUpdateDto.Status == BookingStatus.Cancelled)
+			{
+				user.Balance += service.Price;
+				await userManager.UpdateAsync(user);
+			}
 			mapper.Map(bookingForUpdateDto, booking);
 			await repositoryManager.SaveAsync();
 		}

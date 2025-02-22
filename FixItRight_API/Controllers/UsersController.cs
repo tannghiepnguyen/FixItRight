@@ -84,5 +84,17 @@ namespace FixItRight_API.Controllers
 			var result = await service.UserService.UpdateUserPassword(userId, userForUpdatePasswordDto);
 			return NoContent();
 		}
+
+		[HttpPut("deposit")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize]
+		public async Task<IActionResult> Deposit([FromBody] UserForDepositDto depositDto)
+		{
+			var result = await service.UserService.Deposit(depositDto);
+			return Ok(new
+			{
+				data = result
+			});
+		}
 	}
 }

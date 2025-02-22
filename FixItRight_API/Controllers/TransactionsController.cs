@@ -20,17 +20,6 @@ namespace FixItRight_API.Controllers
 			this.serviceManager = serviceManager;
 		}
 
-		[HttpGet("{bookingId:guid}")]
-		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize]
-		public async Task<IActionResult> GetTransactionByBookingId([FromRoute] Guid bookingId)
-		{
-			var transaction = await serviceManager.TransactionService.GetTransactionByBookingId(bookingId, false);
-			return Ok(new
-			{
-				data = transaction
-			});
-		}
 
 		[HttpPost("{userId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]

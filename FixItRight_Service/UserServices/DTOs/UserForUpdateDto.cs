@@ -11,11 +11,7 @@ namespace FixItRight_Service.UserServices.DTOs
 		public Gender Gender { get; init; }
 		[Required]
 		public DateOnly Birthday { get; init; }
-		[Required]
-		public string UserName { get; init; }
 		public string? Address { get; set; }
-		[Required]
-		public string PhoneNumber { get; init; }
 		public string? CccdFront { get; init; }
 		public string? CccdBack { get; init; }
 		public string? Avatar { get; init; }

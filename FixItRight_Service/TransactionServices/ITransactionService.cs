@@ -7,7 +7,6 @@ namespace FixItRight_Service.TransactionServices
 {
 	public interface ITransactionService
 	{
-		Task<TransactionForReturnDto?> GetTransactionByBookingId(Guid bookingId, bool trackChange);
 		Task<string> CreateTransaction(TransactionForCreationDto transaction);
 		Task<(IEnumerable<TransactionForReturnDto> transactions, MetaData metaData)> GetTransactionsByUserId(string userId, TransactionParameters transactionParameters, bool trackChange);
 		Task<(IEnumerable<TransactionForReturnDto> transactions, MetaData metaData)> GetTransactions(TransactionParameters transactionParameters, bool trackChange);

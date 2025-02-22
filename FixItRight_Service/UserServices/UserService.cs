@@ -2,11 +2,13 @@
 using FixItRight_Domain.Constants;
 using FixItRight_Domain.Exceptions;
 using FixItRight_Domain.Models;
+using FixItRight_Domain.Repositories;
 using FixItRight_Domain.RequestFeatures;
 using FixItRight_Service.EmailServices;
 using FixItRight_Service.EmailServices.DTOs;
 using FixItRight_Service.IServices;
 using FixItRight_Service.Jobs;
+using FixItRight_Service.TransactionServices;
 using FixItRight_Service.UserServices.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -31,9 +33,11 @@ namespace FixItRight_Service.UserServices
 		private readonly IHttpContextAccessor httpContextAccessor;
 		private readonly IEmailSender emailSender;
 		private readonly ISchedulerFactory schedulerFactory;
+		private readonly Utils utils;
+		private readonly IRepositoryManager repositoryManager;
 		private User? user;
 
-		public UserService(ILoggerManager logger, IMapper mapper, UserManager<User> userManager, IConfiguration configuration, IBlobService blobService, IHttpContextAccessor httpContextAccessor, IEmailSender emailSender, ISchedulerFactory schedulerFactory)
+		public UserService(ILoggerManager logger, IMapper mapper, UserManager<User> userManager, IConfiguration configuration, IBlobService blobService, IHttpContextAccessor httpContextAccessor, IEmailSender emailSender, ISchedulerFactory schedulerFactory, Utils utils, IRepositoryManager repositoryManager)
 		{
 			this.logger = logger;
 			this.mapper = mapper;
@@ -43,6 +47,8 @@ namespace FixItRight_Service.UserServices
 			this.httpContextAccessor = httpContextAccessor;
 			this.emailSender = emailSender;
 			this.schedulerFactory = schedulerFactory;
+			this.utils = utils;
+			this.repositoryManager = repositoryManager;
 		}
 		public async Task<IdentityResult> RegisterCustomer(UserForRegistrationDto userForRegistration)
 		{
@@ -53,6 +59,7 @@ namespace FixItRight_Service.UserServices
 			user.Avatar = "https://media.istockphoto.com/vectors/default-profile-picture-avatar-photo-placeholder-vector-illustration-vector-id1223671392?k=6&m=1223671392&s=170667a&w=0&h=zP3l7WJinOFaGb2i1F4g8IS2ylw0FlIaa6x3tP9sebU=";
 			user.CccdBack = string.Empty;
 			user.CccdFront = string.Empty;
+			user.Balance = 0;
 			var result = await userManager.CreateAsync(user, userForRegistration.Password!);
 			if (result.Succeeded)
 			{
@@ -94,6 +101,7 @@ namespace FixItRight_Service.UserServices
 			user.Avatar = "https://media.istockphoto.com/vectors/default-profile-picture-avatar-photo-placeholder-vector-illustration-vector-id1223671392?k=6&m=1223671392&s=170667a&w=0&h=zP3l7WJinOFaGb2i1F4g8IS2ylw0FlIaa6x3tP9sebU=";
 			user.CccdBack = string.Empty;
 			user.CccdFront = string.Empty;
+			user.Balance = 0;
 			var result = await userManager.CreateAsync(user, userForRegistration.Password!);
 			if (result.Succeeded)
 				await userManager.AddToRoleAsync(user, Role.Mechanist.ToString());
@@ -135,10 +143,10 @@ namespace FixItRight_Service.UserServices
 			{
 				throw new NotAuthenticatedException("User is deactivated");
 			}
-			if (!user.EmailConfirmed)
-			{
-				throw new NotAuthenticatedException("Email is not verified");
-			}
+			//if (!user.EmailConfirmed)
+			//{
+			//	throw new NotAuthenticatedException("Email is not verified");
+			//}
 			var result = (user != null && await userManager.CheckPasswordAsync(user, userForAuth.Password!) && user.Active);
 			return result;
 		}
@@ -394,6 +402,42 @@ namespace FixItRight_Service.UserServices
 			userEntity.PasswordResetToken = null;
 			userEntity.PasswordResetTokenExpiryTime = null;
 			await userManager.UpdateAsync(userEntity);
+		}
+
+		public async Task<string> Deposit(UserForDepositDto userForDepositDto, CancellationToken ct = default)
+		{
+			var userEntity = await userManager.FindByIdAsync(userForDepositDto.UserId);
+			userEntity.Balance += userForDepositDto.Amount;
+			await userManager.UpdateAsync(userEntity);
+
+			var transaction = new Transaction
+			{
+				Id = Guid.NewGuid(),
+				Amount = userForDepositDto.Amount,
+				CreatedAt = DateTime.Now,
+				Status = TransactionStatus.Pending,
+				UserId = userForDepositDto.UserId
+			};
+			repositoryManager.TransactionRepository.CreateTransaction(transaction);
+
+			await repositoryManager.SaveAsync();
+
+			var vnpay = new VnPayLibrary();
+			vnpay.AddRequestData("vnp_Version", "2.1.0");
+			vnpay.AddRequestData("vnp_Command", "pay");
+			vnpay.AddRequestData("vnp_TmnCode", configuration.GetSection("VNPay").GetSection("TmnCode").Value);
+			vnpay.AddRequestData("vnp_Amount", (transaction.Amount * 100).ToString());
+			vnpay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
+			vnpay.AddRequestData("vnp_CurrCode", "VND");
+			vnpay.AddRequestData("vnp_IpAddr", utils.GetIpAddress());
+			vnpay.AddRequestData("vnp_Locale", "vn");
+			vnpay.AddRequestData("vnp_OrderType", "other");
+			vnpay.AddRequestData("vnp_OrderInfo", $"Payment for order {transaction.Id}");
+			vnpay.AddRequestData("vnp_ReturnUrl", configuration.GetSection("VNPay").GetSection("ReturnUrlMobile").Value);
+			vnpay.AddRequestData("vnp_TxnRef", transaction.Id.ToString());
+			var paymentUrl = vnpay.CreateRequestUrl(configuration.GetSection("VNPay").GetSection("Url").Value, configuration.GetSection("VNPay").GetSection("HashSecret").Value);
+
+			return paymentUrl;
 		}
 	}
 }

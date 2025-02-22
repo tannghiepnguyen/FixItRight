@@ -5,7 +5,7 @@ namespace FixItRight_Service.BookingServices
 {
 	public interface IBookingService
 	{
-		Task<string> CreateBooking(BookingForCreationDto bookingForCreationDto);
+		Task CreateBooking(BookingForCreationDto bookingForCreationDto);
 		Task<BookingForReturnDto?> GetBookingById(Guid bookingId, bool trackChange);
 		Task UpdateBooking(Guid bookingId, BookingForUpdateDto bookingForUpdateDto, bool trackChange);
 		Task<(IEnumerable<BookingForReturnDto> bookings, MetaData metaData)> GetBookings(BookingParameters bookingParameters, bool trackChange);

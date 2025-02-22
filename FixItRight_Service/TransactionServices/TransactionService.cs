@@ -32,25 +32,10 @@ namespace FixItRight_Service.TransactionServices
 			this.configuration = configuration;
 		}
 
-		private async Task<Transaction> CheckBookingExist(Guid bookingId, bool trackChange)
-		{
-			var booking = await repositoryManager.BookingRepository.GetBookingById(bookingId, trackChange);
-			if (booking is null) throw new BookingNotFoundException(bookingId);
-			return await repositoryManager.TransactionRepository.GetTransactionByBookingId(bookingId, trackChange);
-		}
-
 		private async Task CheckUserExist(string userId)
 		{
 			var user = await userManager.FindByIdAsync(userId);
 			if (user is null) throw new UserNotFoundException(userId);
-		}
-
-		private async Task<User> GetRandomMechanist()
-		{
-			var mechanists = await userManager.GetUsersInRoleAsync(Role.Mechanist.ToString());
-			var random = new Random();
-			var randomMechanist = mechanists.ElementAt(random.Next(mechanists.Count));
-			return randomMechanist;
 		}
 
 		public async Task<string> CreateTransaction(TransactionForCreationDto transactionDto)
@@ -76,12 +61,6 @@ namespace FixItRight_Service.TransactionServices
 			vnpay.AddRequestData("vnp_TxnRef", transaction.Id.ToString());
 			var paymentUrl = vnpay.CreateRequestUrl(configuration.GetSection("VNPay").GetSection("Url").Value, configuration.GetSection("VNPay").GetSection("HashSecret").Value);
 			return paymentUrl; // Redirect to this URL for payment
-		}
-
-		public async Task<TransactionForReturnDto?> GetTransactionByBookingId(Guid bookingId, bool trackChange)
-		{
-			var transaction = await CheckBookingExist(bookingId, trackChange);
-			return mapper.Map<TransactionForReturnDto>(transaction);
 		}
 
 		public async Task<(IEnumerable<TransactionForReturnDto> transactions, MetaData metaData)> GetTransactionsByUserId(string userId, TransactionParameters transactionParameters, bool trackChange)
@@ -123,7 +102,6 @@ namespace FixItRight_Service.TransactionServices
 			var amount = long.Parse(vnpay.GetResponseData("vnp_Amount")) / 100;
 			var responseCode = vnpay.GetResponseData("vnp_ResponseCode");
 			var transaction = await repositoryManager.TransactionRepository.GetTransactionById(transactionId, true);
-			var booking = await repositoryManager.BookingRepository.GetBookingById(transaction.BookingId, true);
 
 			if (transaction == null)
 			{
@@ -133,7 +111,6 @@ namespace FixItRight_Service.TransactionServices
 			// Update transaction status based on response code
 			if (responseCode == "00")
 			{
-				booking.MechanistId = (await GetRandomMechanist()).Id;
 				transaction.Status = TransactionStatus.Success;
 			}
 			else

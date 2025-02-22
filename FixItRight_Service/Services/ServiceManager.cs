@@ -29,10 +29,10 @@ namespace FixItRight_Service.Services
 		private readonly Lazy<ICategoryService> categoryService;
 		public ServiceManager(IRepositoryManager repositoryManager, ILoggerManager logger, IMapper mapper, UserManager<User> userManager, IConfiguration configuration, IBlobService blobService, Utils utils, IHubContext<MessageHub> hubContext, IHttpContextAccessor httpContextAccessor, IEmailSender emailSender, ISchedulerFactory schedulerFactory)
 		{
-			userService = new Lazy<IUserService>(() => new UserService(logger, mapper, userManager, configuration, blobService, httpContextAccessor, emailSender, schedulerFactory));
+			userService = new Lazy<IUserService>(() => new UserService(logger, mapper, userManager, configuration, blobService, httpContextAccessor, emailSender, schedulerFactory, utils, repositoryManager));
 			repairServiceService = new Lazy<IRepairServiceService>(() => new RepairServiceService(repositoryManager, logger, mapper, blobService));
 			ratingService = new Lazy<IRatingService>(() => new RatingService(repositoryManager, logger, mapper));
-			bookingService = new Lazy<IBookingService>(() => new BookingService(repositoryManager, logger, mapper, configuration, utils));
+			bookingService = new Lazy<IBookingService>(() => new BookingService(repositoryManager, logger, mapper, configuration, utils, userManager));
 			transactionService = new Lazy<ITransactionService>(() => new TransactionService(repositoryManager, logger, mapper, userManager, utils, configuration));
 			chatService = new Lazy<IChatService>(() => new ChatService(repositoryManager, logger, mapper, hubContext));
 			categoryService = new Lazy<ICategoryService>(() => new CategoryService(repositoryManager, logger, mapper));

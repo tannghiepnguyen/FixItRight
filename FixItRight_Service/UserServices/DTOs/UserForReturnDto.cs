@@ -14,6 +14,7 @@ namespace FixItRight_Service.UserServices.DTOs
 		public DateOnly Birthday { get; init; }
 		public string UserName { get; init; }
 		public string Email { get; init; }
+		public double Balance { get; init; }
 		public IList<string> Roles { get; set; }
 	}
 }

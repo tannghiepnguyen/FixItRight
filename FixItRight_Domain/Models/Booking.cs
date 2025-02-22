@@ -17,7 +17,6 @@ namespace FixItRight_Domain.Models
 		public TimeOnly WorkingTime { get; set; }
 		public BookingStatus Status { get; set; }
 		public Rating Rating { get; set; }
-		public Transaction Transaction { get; set; }
 		public ICollection<Chat> Chats { get; set; }
 	}
 }

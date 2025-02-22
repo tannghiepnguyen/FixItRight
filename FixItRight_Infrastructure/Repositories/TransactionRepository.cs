@@ -14,8 +14,6 @@ namespace FixItRight_Infrastructure.Repositories
 
 		public void CreateTransaction(Transaction transaction) => Create(transaction);
 
-		public async Task<Transaction?> GetTransactionByBookingId(Guid bookingId, bool trackChange) => await FindByCondition(transaction => transaction.BookingId.Equals(bookingId), trackChange).SingleOrDefaultAsync();
-
 		public async Task<PagedList<Transaction>> GetTransactionsByUserId(string userId, TransactionParameters transactionParameters, bool trackChange)
 		{
 			var transactions = await FindByCondition(transaction => transaction.UserId.Equals(userId), trackChange).OrderBy(c => c.CreatedAt).ToListAsync();
@@ -29,5 +27,10 @@ namespace FixItRight_Infrastructure.Repositories
 		}
 
 		public async Task<Transaction?> GetTransactionById(Guid id, bool trackChange) => await FindByCondition(transaction => transaction.Id.Equals(id), trackChange).SingleOrDefaultAsync();
+
+		public Task<Transaction?> GetTransactionByBookingId(Guid bookingId, bool trackChange)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

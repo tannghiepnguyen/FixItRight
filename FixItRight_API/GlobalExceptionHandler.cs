@@ -22,6 +22,7 @@ namespace FixItRight_API
 				NotFoundException => StatusCodes.Status404NotFound,
 				BadRequestException => StatusCodes.Status400BadRequest,
 				NotAuthenticatedException => StatusCodes.Status401Unauthorized,
+				NotEnoughMoneyException => StatusCodes.Status402PaymentRequired,
 				_ => StatusCodes.Status500InternalServerError
 			};
 			logger.LogError($"Something went wrong: {exception.Message}");

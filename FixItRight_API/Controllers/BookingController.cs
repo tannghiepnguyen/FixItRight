@@ -85,13 +85,13 @@ namespace FixItRight_API.Controllers
 		}
 
 		[HttpPost]
-		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[Authorize(Roles = $"{nameof(Role.Customer)}")]
 		public async Task<IActionResult> CreateBooking([FromBody] BookingForCreationDto booking)
 		{
-			var paymentUrl = await serviceManager.BookingService.CreateBooking(booking);
-			return Ok(new { data = paymentUrl });
+			await serviceManager.BookingService.CreateBooking(booking);
+			return NoContent();
 		}
 
 		[HttpPut("{id:guid}")]

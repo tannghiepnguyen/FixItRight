@@ -21,5 +21,6 @@ namespace FixItRight_Service.UserServices
 		Task<IdentityResult> ConfirmEmail(string token, string email);
 		Task SendResetPasswordToken(string email, CancellationToken ct = default);
 		Task ResetPassword(UserForResetPasswordDto userForResetPasswordDto, CancellationToken ct = default);
+		Task<string> Deposit(UserForDepositDto userForDepositDto, CancellationToken ct = default);
 	}
 }
