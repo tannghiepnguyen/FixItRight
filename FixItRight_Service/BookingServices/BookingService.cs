@@ -104,5 +104,17 @@ namespace FixItRight_Service.BookingServices
 			var bookings = mapper.Map<IEnumerable<BookingForReturnDto>>(bookingsWithMetaData);
 			return (bookings, bookingsWithMetaData.MetaData);
 		}
+
+		public async Task DeleteBooking(Guid bookingId)
+		{
+			var booking = await CheckBookingExist(bookingId, false);
+			if (booking.Status != BookingStatus.Pending) throw new BookingConflictException("You cannot delete your booking anymore");
+			var user = await userManager.FindByIdAsync(booking.CustomerId);
+			var service = await repositoryManager.RepairService.GetRepairServiceByIdAsync(booking.ServiceId, false);
+			user.Balance += service.Price;
+			await userManager.UpdateAsync(user);
+			repositoryManager.BookingRepository.DeleteBooking(booking);
+			await repositoryManager.SaveAsync();
+		}
 	}
 }

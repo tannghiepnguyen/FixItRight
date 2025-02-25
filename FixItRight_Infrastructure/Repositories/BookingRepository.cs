@@ -14,6 +14,8 @@ namespace FixItRight_Infrastructure.Repositories
 
 		public void CreateBooking(Booking booking) => Create(booking);
 
+		public void DeleteBooking(Booking booking) => Delete(booking);
+
 		public async Task<PagedList<Booking>> GetBookingByCustomerId(BookingParameters bookingParameters, string customerId, bool trackChange)
 		{
 			var bookings = FindByCondition(booking => booking.CustomerId.Equals(customerId), trackChange);

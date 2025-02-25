@@ -406,10 +406,6 @@ namespace FixItRight_Service.UserServices
 
 		public async Task<string> Deposit(UserForDepositDto userForDepositDto, CancellationToken ct = default)
 		{
-			var userEntity = await userManager.FindByIdAsync(userForDepositDto.UserId);
-			userEntity.Balance += userForDepositDto.Amount;
-			await userManager.UpdateAsync(userEntity);
-
 			var transaction = new Transaction
 			{
 				Id = Guid.NewGuid(),

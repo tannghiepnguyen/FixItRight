@@ -102,6 +102,7 @@ namespace FixItRight_Service.TransactionServices
 			var amount = long.Parse(vnpay.GetResponseData("vnp_Amount")) / 100;
 			var responseCode = vnpay.GetResponseData("vnp_ResponseCode");
 			var transaction = await repositoryManager.TransactionRepository.GetTransactionById(transactionId, true);
+			var user = await userManager.FindByIdAsync(transaction.UserId);
 
 			if (transaction == null)
 			{
@@ -111,6 +112,8 @@ namespace FixItRight_Service.TransactionServices
 			// Update transaction status based on response code
 			if (responseCode == "00")
 			{
+				user.Balance += amount;
+				await userManager.UpdateAsync(user);
 				transaction.Status = TransactionStatus.Success;
 			}
 			else

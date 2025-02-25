@@ -10,5 +10,6 @@ namespace FixItRight_Domain.Repositories
 		Task<PagedList<Booking>> GetBookingByMechanistId(BookingParameters bookingParameters, string mechanistId, bool trackChange);
 		Task<PagedList<Booking>> GetBookingByCustomerId(BookingParameters bookingParameters, string customerId, bool trackChange);
 		void CreateBooking(Booking booking);
+		void DeleteBooking(Booking booking);
 	}
 }

@@ -104,5 +104,15 @@ namespace FixItRight_API.Controllers
 			await serviceManager.BookingService.UpdateBooking(id, booking, true);
 			return NoContent();
 		}
+
+		[HttpDelete("{id:guid}")]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[Authorize(Roles = $"{nameof(Role.Customer)}")]
+		public async Task<IActionResult> DeleteBooking([FromRoute] Guid id)
+		{
+			await serviceManager.BookingService.DeleteBooking(id);
+			return NoContent();
+		}
 	}
 }
