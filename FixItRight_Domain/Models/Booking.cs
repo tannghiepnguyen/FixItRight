@@ -14,6 +14,7 @@ namespace FixItRight_Domain.Models
 		public DateTime BookingDate { get; set; }
 		public DateOnly WorkingDate { get; set; }
 		public string Address { get; set; }
+		public string? Note { get; set; }
 		public TimeOnly WorkingTime { get; set; }
 		public BookingStatus Status { get; set; }
 		public Rating Rating { get; set; }

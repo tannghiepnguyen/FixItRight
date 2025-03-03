@@ -17,5 +17,6 @@ namespace FixItRight_Service.BookingServices.DTOs
 		public TimeOnly WorkingTime { get; init; }
 		public BookingStatus Status { get; init; }
 		public DateTime BookingDate { get; init; }
+		public string? Note { get; init; }
 	}
 }

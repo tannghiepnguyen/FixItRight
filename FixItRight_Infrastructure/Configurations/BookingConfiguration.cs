@@ -12,6 +12,10 @@ namespace FixItRight_Infrastructure.Configurations
 			builder.Property(t => t.Id).ValueGeneratedOnAdd();
 			builder.Property(b => b.BookingDate).IsRequired();
 			builder.Property(b => b.Status).HasConversion<string>().IsRequired();
+			builder.Property(b => b.WorkingDate).IsRequired();
+			builder.Property(b => b.WorkingTime).IsRequired();
+			builder.Property(b => b.Address).IsRequired();
+			builder.Property(b => b.Note).IsRequired(false);
 			builder.HasOne(b => b.Customer).WithMany(c => c.CustomerBookings).HasForeignKey(b => b.CustomerId).OnDelete(DeleteBehavior.NoAction);
 			builder.HasOne(b => b.Mechanist).WithMany(c => c.MechanistBookings).HasForeignKey(b => b.MechanistId).OnDelete(DeleteBehavior.NoAction);
 			builder.HasOne(b => b.Service).WithMany(c => c.Bookings).HasForeignKey(b => b.ServiceId).OnDelete(DeleteBehavior.NoAction);
