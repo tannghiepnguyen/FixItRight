@@ -13,6 +13,8 @@ namespace FixItRight_Infrastructure.Repositories
 
 		public void CreateCategory(Category category) => Create(category);
 
+		public void DeleteCategory(Category category) => Delete(category);
+
 		public async Task<IEnumerable<Category>> GetCategories(bool trackChange) => await FindAll(trackChange).ToListAsync();
 
 		public async Task<Category?> GetCategoryById(Guid categoryId, bool trackChange) => await FindByCondition(category => category.Id.Equals(categoryId), trackChange).SingleOrDefaultAsync();

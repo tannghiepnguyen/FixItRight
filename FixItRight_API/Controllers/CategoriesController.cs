@@ -59,5 +59,15 @@ namespace FixItRight_API.Controllers
 			await serviceManager.CategoryService.UpdateCategoryAsync(id, categoryForUpdate, true);
 			return NoContent();
 		}
+
+		[HttpDelete("{id:guid}")]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[Authorize(Roles = $"{nameof(Role.Admin)}")]
+		public async Task<IActionResult> DeleteCategoryAsync([FromRoute] Guid id)
+		{
+			await serviceManager.CategoryService.DeleteCategoryAsync(id);
+			return NoContent();
+		}
 	}
 }

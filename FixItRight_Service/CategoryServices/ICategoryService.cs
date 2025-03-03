@@ -8,5 +8,6 @@ namespace FixItRight_Service.CategoryServices
 		Task<CategoryForReturnDto?> GetCategoryByIdAsync(Guid id, bool trackChange);
 		Task<CategoryForReturnDto> AddCategoryAsync(CategoryForCreationDto category);
 		Task UpdateCategoryAsync(Guid id, CategoryForUpdateDto category, bool trackChange);
+		Task DeleteCategoryAsync(Guid id);
 	}
 }

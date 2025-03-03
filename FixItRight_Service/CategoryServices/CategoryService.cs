@@ -50,5 +50,12 @@ namespace FixItRight_Service.CategoryServices
 			mapper.Map(category, categoryEntity);
 			await repositoryManager.SaveAsync();
 		}
+
+		public async Task DeleteCategoryAsync(Guid id)
+		{
+			var categoryEntity = await CheckCategoryExist(id, false);
+			repositoryManager.CategoryRepository.DeleteCategory(categoryEntity);
+			await repositoryManager.SaveAsync();
+		}
 	}
 }
