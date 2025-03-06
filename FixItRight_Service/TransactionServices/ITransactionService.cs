@@ -1,7 +1,6 @@
 ﻿using FixItRight_Domain.RequestFeatures;
 using FixItRight_Service.TransactionServices.DTOs;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using Net.payOS.Types;
 
 namespace FixItRight_Service.TransactionServices
 {
@@ -10,6 +9,6 @@ namespace FixItRight_Service.TransactionServices
 		Task<string> CreateTransaction(TransactionForCreationDto transaction);
 		Task<(IEnumerable<TransactionForReturnDto> transactions, MetaData metaData)> GetTransactionsByUserId(string userId, TransactionParameters transactionParameters, bool trackChange);
 		Task<(IEnumerable<TransactionForReturnDto> transactions, MetaData metaData)> GetTransactions(TransactionParameters transactionParameters, bool trackChange);
-		Task<IActionResult> IPNAsync(IQueryCollection query);
+		Task IPNAsync(WebhookData webhookData);
 	}
 }

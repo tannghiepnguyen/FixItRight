@@ -5,6 +5,8 @@ using FixItRight_Service.IServices;
 using FixItRight_Service.TransactionServices.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Net.payOS;
+using Net.payOS.Types;
 using System.Text.Json;
 
 namespace FixItRight_API.Controllers
@@ -14,10 +16,14 @@ namespace FixItRight_API.Controllers
 	public class TransactionsController : ControllerBase
 	{
 		private readonly IServiceManager serviceManager;
+		private readonly HttpClient httpClient;
+		private readonly IConfiguration configuration;
 
-		public TransactionsController(IServiceManager serviceManager)
+		public TransactionsController(IServiceManager serviceManager, HttpClient httpClient, IConfiguration configuration)
 		{
 			this.serviceManager = serviceManager;
+			this.httpClient = httpClient;
+			this.configuration = configuration;
 		}
 
 
@@ -63,13 +69,20 @@ namespace FixItRight_API.Controllers
 		//	var paymentUrl = await serviceManager.TransactionService.CreateTransaction(transaction);
 		//	return Ok(new { data = paymentUrl });
 		//}
+		public record Responses(int error, String message, object? data);
 
-		[HttpGet("ipn")]
-		[ProducesResponseType(StatusCodes.Status200OK)]
-		public async Task<IActionResult> IPN()
+		[HttpPost("receive-hook")]
+		public async Task<IActionResult> IPN([FromBody] WebhookType webhookBody)
 		{
-			var result = await serviceManager.TransactionService.IPNAsync(Request.Query);
-			return Ok(result);
+			var clientId = configuration.GetSection("PayOSClientID").Value;
+			var apiKey = configuration.GetSection("PayOSAPIKey").Value;
+			var checksumKey = configuration.GetSection("PayOSChecksumKey").Value;
+
+			var payOS = new PayOS(clientId, apiKey, checksumKey);
+			WebhookData data = payOS.verifyPaymentWebhookData(webhookBody);
+
+			await serviceManager.TransactionService.IPNAsync(data);
+			return Ok(new Responses(0, "Success", null));
 		}
 
 	}

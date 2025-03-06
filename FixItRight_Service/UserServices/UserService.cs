@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Net.payOS;
+using Net.payOS.Types;
 using Quartz;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -406,10 +408,11 @@ namespace FixItRight_Service.UserServices
 
 		public async Task<string> Deposit(UserForDepositDto userForDepositDto, CancellationToken ct = default)
 		{
-			var transaction = new Transaction
+			var transaction = new FixItRight_Domain.Models.Transaction
 			{
 				Id = Guid.NewGuid(),
 				Amount = userForDepositDto.Amount,
+				OrderCode = int.Parse(DateTimeOffset.Now.ToString("ffffff")),
 				CreatedAt = DateTime.Now,
 				Status = TransactionStatus.Pending,
 				UserId = userForDepositDto.UserId
@@ -418,22 +421,42 @@ namespace FixItRight_Service.UserServices
 
 			await repositoryManager.SaveAsync();
 
-			var vnpay = new VnPayLibrary();
-			vnpay.AddRequestData("vnp_Version", "2.1.0");
-			vnpay.AddRequestData("vnp_Command", "pay");
-			vnpay.AddRequestData("vnp_TmnCode", configuration.GetSection("VNPay").GetSection("TmnCode").Value);
-			vnpay.AddRequestData("vnp_Amount", (transaction.Amount * 100).ToString());
-			vnpay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
-			vnpay.AddRequestData("vnp_CurrCode", "VND");
-			vnpay.AddRequestData("vnp_IpAddr", utils.GetIpAddress());
-			vnpay.AddRequestData("vnp_Locale", "vn");
-			vnpay.AddRequestData("vnp_OrderType", "other");
-			vnpay.AddRequestData("vnp_OrderInfo", $"Payment for order {transaction.Id}");
-			vnpay.AddRequestData("vnp_ReturnUrl", configuration.GetSection("VNPay").GetSection("ReturnUrlMobile").Value);
-			vnpay.AddRequestData("vnp_TxnRef", transaction.Id.ToString());
-			var paymentUrl = vnpay.CreateRequestUrl(configuration.GetSection("VNPay").GetSection("Url").Value, configuration.GetSection("VNPay").GetSection("HashSecret").Value);
+			//var vnpay = new VnPayLibrary();
+			//vnpay.AddRequestData("vnp_Version", "2.1.0");
+			//vnpay.AddRequestData("vnp_Command", "pay");
+			//vnpay.AddRequestData("vnp_TmnCode", configuration.GetSection("VNPay").GetSection("TmnCode").Value);
+			//vnpay.AddRequestData("vnp_Amount", (transaction.Amount * 100).ToString());
+			//vnpay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
+			//vnpay.AddRequestData("vnp_CurrCode", "VND");
+			//vnpay.AddRequestData("vnp_IpAddr", utils.GetIpAddress());
+			//vnpay.AddRequestData("vnp_Locale", "vn");
+			//vnpay.AddRequestData("vnp_OrderType", "other");
+			//vnpay.AddRequestData("vnp_OrderInfo", $"Payment for order {transaction.Id}");
+			//vnpay.AddRequestData("vnp_ReturnUrl", configuration.GetSection("VNPay").GetSection("ReturnUrlMobile").Value);
+			//vnpay.AddRequestData("vnp_TxnRef", transaction.Id.ToString());
+			//var paymentUrl = vnpay.CreateRequestUrl(configuration.GetSection("VNPay").GetSection("Url").Value, configuration.GetSection("VNPay").GetSection("HashSecret").Value);
 
-			return paymentUrl;
+			//return paymentUrl;
+
+			var clientId = configuration.GetSection("PayOSClientID").Value;
+			var apiKey = configuration.GetSection("PayOSAPIKey").Value;
+			var checksumKey = configuration.GetSection("PayOSChecksumKey").Value;
+
+			var domain = "https://fix-it-right.vercel.app/login";
+
+			var payOS = new PayOS(clientId, apiKey, checksumKey);
+
+			var paymentLinkRequest = new PaymentData(
+				orderCode: transaction.OrderCode,
+				amount: (int)transaction.Amount,
+				description: "Payment",
+				items: [new("Deposit", 1, (int)transaction.Amount)],
+				returnUrl: domain + "?success=true",
+				cancelUrl: domain + "?canceled=true"
+			);
+			var response = await payOS.createPaymentLink(paymentLinkRequest);
+
+			return response.checkoutUrl;
 		}
 	}
 }

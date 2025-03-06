@@ -6,10 +6,10 @@ using FixItRight_Domain.Repositories;
 using FixItRight_Domain.RequestFeatures;
 using FixItRight_Service.IServices;
 using FixItRight_Service.TransactionServices.DTOs;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Net.payOS;
+using Net.payOS.Types;
 
 namespace FixItRight_Service.TransactionServices
 {
@@ -40,7 +40,7 @@ namespace FixItRight_Service.TransactionServices
 
 		public async Task<string> CreateTransaction(TransactionForCreationDto transactionDto)
 		{
-			var transaction = mapper.Map<Transaction>(transactionDto);
+			var transaction = mapper.Map<FixItRight_Domain.Models.Transaction>(transactionDto);
 			transaction.CreatedAt = DateTime.Now;
 			transaction.Status = TransactionStatus.Pending;
 			repositoryManager.TransactionRepository.CreateTransaction(transaction);
@@ -78,51 +78,70 @@ namespace FixItRight_Service.TransactionServices
 			return (transactions, transactionsWithMetaData.MetaData);
 		}
 
-		public async Task<IActionResult> IPNAsync(IQueryCollection query)
+		public record Responses(int error, String message, object? data);
+
+		public async Task IPNAsync(WebhookData webhookData)
 		{
-			var vnpay = new VnPayLibrary();
-			foreach (var key in query.Keys)
+			var transaction = await repositoryManager.TransactionRepository.GetTransactionById(webhookData.orderCode, true);
+			var clientId = configuration.GetSection("PayOSClientID").Value;
+			var apiKey = configuration.GetSection("PayOSAPIKey").Value;
+			var checksumKey = configuration.GetSection("PayOSChecksumKey").Value;
+
+			var payOS = new PayOS(clientId, apiKey, checksumKey);
+			if (webhookData.code == "00")
 			{
-				if (key.StartsWith("vnp_"))
-				{
-					vnpay.AddResponseData(key, query[key]);
-				}
-			}
-
-			var vnpSecureHash = query["vnp_SecureHash"];
-			var isValid = vnpay.ValidateSignature(vnpSecureHash, configuration.GetSection("VNPay").GetSection("HashSecret").Value);
-
-			if (!isValid)
-			{
-				return new JsonResult(new { RspCode = "97", Message = "Invalid signature" });
-			}
-
-			// Validate and update transaction status
-			var transactionId = Guid.Parse(vnpay.GetResponseData("vnp_TxnRef"));
-			var amount = long.Parse(vnpay.GetResponseData("vnp_Amount")) / 100;
-			var responseCode = vnpay.GetResponseData("vnp_ResponseCode");
-			var transaction = await repositoryManager.TransactionRepository.GetTransactionById(transactionId, true);
-			var user = await userManager.FindByIdAsync(transaction.UserId);
-
-			if (transaction == null)
-			{
-				return new JsonResult(new { RspCode = "01", Message = "Order not found" });
-			}
-
-			// Update transaction status based on response code
-			if (responseCode == "00")
-			{
-				user.Balance += amount;
-				await userManager.UpdateAsync(user);
 				transaction.Status = TransactionStatus.Success;
 			}
 			else
 			{
 				transaction.Status = TransactionStatus.Failed;
 			}
+
 			await repositoryManager.SaveAsync();
 
-			return new JsonResult(new { RspCode = "00", Message = "Confirm Success" });
+			//var vnpay = new VnPayLibrary();
+			//foreach (var key in query.Keys)
+			//{
+			//	if (key.StartsWith("vnp_"))
+			//	{
+			//		vnpay.AddResponseData(key, query[key]);
+			//	}
+			//}
+
+			//var vnpSecureHash = query["vnp_SecureHash"];
+			//var isValid = vnpay.ValidateSignature(vnpSecureHash, configuration.GetSection("VNPay").GetSection("HashSecret").Value);
+
+			//if (!isValid)
+			//{
+			//	return new JsonResult(new { RspCode = "97", Message = "Invalid signature" });
+			//}
+
+			//// Validate and update transaction status
+			//var transactionId = Guid.Parse(vnpay.GetResponseData("vnp_TxnRef"));
+			//var amount = long.Parse(vnpay.GetResponseData("vnp_Amount")) / 100;
+			//var responseCode = vnpay.GetResponseData("vnp_ResponseCode");
+			//var transaction = await repositoryManager.TransactionRepository.GetTransactionById(transactionId, true);
+			//var user = await userManager.FindByIdAsync(transaction.UserId);
+
+			//if (transaction == null)
+			//{
+			//	return new JsonResult(new { RspCode = "01", Message = "Order not found" });
+			//}
+
+			//// Update transaction status based on response code
+			//if (responseCode == "00")
+			//{
+			//	user.Balance += amount;
+			//	await userManager.UpdateAsync(user);
+			//	transaction.Status = TransactionStatus.Success;
+			//}
+			//else
+			//{
+			//	transaction.Status = TransactionStatus.Failed;
+			//}
+			//await repositoryManager.SaveAsync();
+
+			//return new JsonResult(new { RspCode = "00", Message = "Confirm Success" });
 		}
 	}
 }

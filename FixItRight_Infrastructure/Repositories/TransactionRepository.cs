@@ -28,9 +28,6 @@ namespace FixItRight_Infrastructure.Repositories
 
 		public async Task<Transaction?> GetTransactionById(Guid id, bool trackChange) => await FindByCondition(transaction => transaction.Id.Equals(id), trackChange).SingleOrDefaultAsync();
 
-		public Task<Transaction?> GetTransactionByBookingId(Guid bookingId, bool trackChange)
-		{
-			throw new NotImplementedException();
-		}
+		public async Task<Transaction?> GetTransactionById(long code, bool trackChange) => await FindByCondition(transaction => transaction.OrderCode.Equals(code), trackChange).SingleOrDefaultAsync();
 	}
 }

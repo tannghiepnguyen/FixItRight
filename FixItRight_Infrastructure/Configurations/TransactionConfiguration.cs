@@ -10,6 +10,7 @@ namespace FixItRight_Infrastructure.Configurations
 		{
 			builder.HasKey(t => t.Id);
 			builder.Property(t => t.Id).ValueGeneratedOnAdd();
+			builder.Property(t => t.OrderCode).IsRequired();
 			builder.Property(t => t.Amount).IsRequired();
 			builder.Property(t => t.CreatedAt).IsRequired();
 			builder.Property(t => t.Status).HasConversion<string>().IsRequired();
