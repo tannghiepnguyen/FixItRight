@@ -85,5 +85,28 @@ namespace FixItRight_API.Controllers
 			return Ok(new Responses(0, "Success", null));
 		}
 
+		[HttpGet("total-transactions")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Roles = $"{nameof(Role.Admin)}")]
+		public async Task<IActionResult> GetTotalTransactions()
+		{
+			var totalTransaction = await serviceManager.TransactionService.GetNumberOfTransactions();
+			return Ok(new
+			{
+				data = totalTransaction
+			});
+		}
+
+		[HttpGet("total-money")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Roles = $"{nameof(Role.Admin)}")]
+		public async Task<IActionResult> GetTotalMoney()
+		{
+			var totalTransaction = await serviceManager.TransactionService.GetTotalMoney();
+			return Ok(new
+			{
+				data = totalTransaction
+			});
+		}
 	}
 }

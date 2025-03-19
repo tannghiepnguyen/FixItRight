@@ -12,5 +12,7 @@ namespace FixItRight_Service.BookingServices
 		Task<(IEnumerable<BookingForReturnDto> bookings, MetaData metaData)> GetBookingsByMechanistId(BookingParameters bookingParameters, string mechanistId, bool trackChange);
 		Task<(IEnumerable<BookingForReturnDto> bookings, MetaData metaData)> GetBookingsByCustomerId(BookingParameters bookingParameters, string customerId, bool trackChange);
 		Task DeleteBooking(Guid bookingId);
+		Task<int> GetNumberOfBookings();
+		Task<double> GetTotalMeneyForBooking();
 	}
 }

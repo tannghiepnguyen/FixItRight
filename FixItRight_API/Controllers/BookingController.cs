@@ -114,5 +114,29 @@ namespace FixItRight_API.Controllers
 			await serviceManager.BookingService.DeleteBooking(id);
 			return NoContent();
 		}
+
+		[HttpGet("numbers-of-booking")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Roles = $"{nameof(Role.Admin)}")]
+		public async Task<IActionResult> GetNumberOfBooking()
+		{
+			var numberOfBooking = await serviceManager.BookingService.GetNumberOfBookings();
+			return Ok(new
+			{
+				data = numberOfBooking
+			});
+		}
+
+		[HttpGet("total-booking-money")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Roles = $"{nameof(Role.Admin)}")]
+		public async Task<IActionResult> GetTotalMoneyForBooking()
+		{
+			var totalMoneyBooking = await serviceManager.BookingService.GetTotalMeneyForBooking();
+			return Ok(new
+			{
+				data = totalMoneyBooking
+			});
+		}
 	}
 }

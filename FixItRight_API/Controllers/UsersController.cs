@@ -96,5 +96,17 @@ namespace FixItRight_API.Controllers
 				data = result
 			});
 		}
+
+		[HttpGet("number-of-users")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Roles = $"{nameof(Role.Admin)}")]
+		public IActionResult GetNumerOfUsers()
+		{
+			var result = service.UserService.GetnumberOfUsers();
+			return Ok(new
+			{
+				data = result
+			});
+		}
 	}
 }

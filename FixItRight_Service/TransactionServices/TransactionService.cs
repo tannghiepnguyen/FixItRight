@@ -7,6 +7,7 @@ using FixItRight_Domain.RequestFeatures;
 using FixItRight_Service.IServices;
 using FixItRight_Service.TransactionServices.DTOs;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Net.payOS;
 using Net.payOS.Types;
@@ -83,6 +84,7 @@ namespace FixItRight_Service.TransactionServices
 		public async Task IPNAsync(WebhookData webhookData)
 		{
 			var transaction = await repositoryManager.TransactionRepository.GetTransactionById(webhookData.orderCode, true);
+			var user = await userManager.FindByIdAsync(transaction.UserId);
 			var clientId = configuration.GetSection("PayOSClientID").Value;
 			var apiKey = configuration.GetSection("PayOSAPIKey").Value;
 			var checksumKey = configuration.GetSection("PayOSChecksumKey").Value;
@@ -90,7 +92,9 @@ namespace FixItRight_Service.TransactionServices
 			var payOS = new PayOS(clientId, apiKey, checksumKey);
 			if (webhookData.code == "00")
 			{
+				user.Balance += transaction.Amount;
 				transaction.Status = TransactionStatus.Success;
+				await userManager.UpdateAsync(user);
 			}
 			else
 			{
@@ -142,6 +146,16 @@ namespace FixItRight_Service.TransactionServices
 			//await repositoryManager.SaveAsync();
 
 			//return new JsonResult(new { RspCode = "00", Message = "Confirm Success" });
+		}
+
+		public async Task<int> GetNumberOfTransactions()
+		{
+			return await repositoryManager.TransactionRepository.GetTransactions(false).CountAsync();
+		}
+
+		public async Task<double> GetTotalMoney()
+		{
+			return await repositoryManager.TransactionRepository.GetTransactions(false).SumAsync(c => c.Amount);
 		}
 	}
 }

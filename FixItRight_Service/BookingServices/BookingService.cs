@@ -8,6 +8,7 @@ using FixItRight_Service.BookingServices.DTOs;
 using FixItRight_Service.IServices;
 using FixItRight_Service.TransactionServices;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace FixItRight_Service.BookingServices
@@ -115,6 +116,18 @@ namespace FixItRight_Service.BookingServices
 			await userManager.UpdateAsync(user);
 			repositoryManager.BookingRepository.DeleteBooking(booking);
 			await repositoryManager.SaveAsync();
+		}
+
+		public async Task<int> GetNumberOfBookings()
+		{
+			var bookings = repositoryManager.BookingRepository.GetBookings(false);
+			return await bookings.CountAsync();
+		}
+
+		public async Task<double> GetTotalMeneyForBooking()
+		{
+			var bookings = repositoryManager.BookingRepository.GetBookings(false);
+			return await bookings.SumAsync(b => b.Service.Price);
 		}
 	}
 }

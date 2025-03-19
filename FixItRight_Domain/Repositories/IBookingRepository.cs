@@ -7,6 +7,7 @@ namespace FixItRight_Domain.Repositories
 	{
 		Task<PagedList<Booking>> GetBookings(BookingParameters bookingParameters, bool trackChange);
 		Task<Booking?> GetBookingById(Guid bookingId, bool trackChange);
+		IQueryable<Booking> GetBookings(bool trackChange);
 		Task<PagedList<Booking>> GetBookingByMechanistId(BookingParameters bookingParameters, string mechanistId, bool trackChange);
 		Task<PagedList<Booking>> GetBookingByCustomerId(BookingParameters bookingParameters, string customerId, bool trackChange);
 		void CreateBooking(Booking booking);

@@ -9,6 +9,7 @@ namespace FixItRight_Domain.Repositories
 		Task<Transaction?> GetTransactionById(long code, bool trackChange);
 		Task<PagedList<Transaction>> GetTransactionsByUserId(string userId, TransactionParameters transactionParameters, bool trackChange);
 		Task<PagedList<Transaction>> GetTransactions(TransactionParameters transactionParameters, bool trackChange);
+		IQueryable<Transaction> GetTransactions(bool trackChange);
 		void CreateTransaction(Transaction transaction);
 
 	}

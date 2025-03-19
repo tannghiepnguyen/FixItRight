@@ -145,10 +145,10 @@ namespace FixItRight_Service.UserServices
 			{
 				throw new NotAuthenticatedException("User is deactivated");
 			}
-			//if (!user.EmailConfirmed)
-			//{
-			//	throw new NotAuthenticatedException("Email is not verified");
-			//}
+			if (!user.EmailConfirmed)
+			{
+				throw new NotAuthenticatedException("Email is not verified");
+			}
 			var result = (user != null && await userManager.CheckPasswordAsync(user, userForAuth.Password!) && user.Active);
 			return result;
 		}
@@ -457,6 +457,12 @@ namespace FixItRight_Service.UserServices
 			var response = await payOS.createPaymentLink(paymentLinkRequest);
 
 			return response.checkoutUrl;
+		}
+
+		public int GetnumberOfUsers(CancellationToken ct = default)
+		{
+			var users = userManager.Users;
+			return users.Count();
 		}
 	}
 }

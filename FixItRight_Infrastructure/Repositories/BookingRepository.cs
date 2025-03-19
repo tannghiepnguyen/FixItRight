@@ -44,5 +44,10 @@ namespace FixItRight_Infrastructure.Repositories
 			bookings = bookings.Include(c => c.Service).ThenInclude(s => s.Category);
 			return PagedList<Booking>.ToPagedList((await bookings.ToListAsync()), bookingParameters.PageNumber, bookingParameters.PageSize);
 		}
+
+		public IQueryable<Booking> GetBookings(bool trackChange)
+		{
+			return FindByCondition(b => b.Status != FixItRight_Domain.Constants.BookingStatus.Cancelled, trackChange).Include(b => b.Service);
+		}
 	}
 }
