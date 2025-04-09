@@ -57,7 +57,6 @@ namespace FixItRight_Service.UserServices
 			var user = mapper.Map<User>(userForRegistration);
 			user.CreatedAt = DateTime.Now;
 			user.Active = true;
-			user.IsVerified = false;
 			user.Avatar = "https://media.istockphoto.com/vectors/default-profile-picture-avatar-photo-placeholder-vector-illustration-vector-id1223671392?k=6&m=1223671392&s=170667a&w=0&h=zP3l7WJinOFaGb2i1F4g8IS2ylw0FlIaa6x3tP9sebU=";
 			user.CccdBack = string.Empty;
 			user.CccdFront = string.Empty;
@@ -99,7 +98,6 @@ namespace FixItRight_Service.UserServices
 			var user = mapper.Map<User>(userForRegistration);
 			user.CreatedAt = DateTime.Now;
 			user.Active = true;
-			user.IsVerified = false;
 			user.Avatar = "https://media.istockphoto.com/vectors/default-profile-picture-avatar-photo-placeholder-vector-illustration-vector-id1223671392?k=6&m=1223671392&s=170667a&w=0&h=zP3l7WJinOFaGb2i1F4g8IS2ylw0FlIaa6x3tP9sebU=";
 			user.CccdBack = string.Empty;
 			user.CccdFront = string.Empty;
@@ -145,10 +143,10 @@ namespace FixItRight_Service.UserServices
 			{
 				throw new NotAuthenticatedException("User is deactivated");
 			}
-			if (!user.EmailConfirmed)
-			{
-				throw new NotAuthenticatedException("Email is not verified");
-			}
+			//if (!user.EmailConfirmed)
+			//{
+			//	throw new NotAuthenticatedException("Email is not verified");
+			//}
 			var result = (user != null && await userManager.CheckPasswordAsync(user, userForAuth.Password!) && user.Active);
 			return result;
 		}
@@ -336,16 +334,7 @@ namespace FixItRight_Service.UserServices
 			return await userManager.UpdateAsync(user);
 		}
 
-		public async Task<IdentityResult> VerifyUser(string userId)
-		{
-			var user = await userManager.FindByIdAsync(userId);
 
-			if (user is null) throw new UserNotFoundException(userId);
-
-			user.IsVerified = true;
-
-			return await userManager.UpdateAsync(user);
-		}
 
 		public async Task<IdentityResult> UpdateUserPassword(string userId, UserForUpdatePasswordDto userForUpdatePasswordDto)
 		{

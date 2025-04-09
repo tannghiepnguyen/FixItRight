@@ -4,7 +4,7 @@ namespace FixItRight_Service.RepairServiceServices.DTOs
 {
 	public record ServiceForUpdateDto
 	{
-		public string? File { get; init; }
+		public string? Image { get; init; }
 		[Required]
 		public string Name { get; init; }
 		[Required]

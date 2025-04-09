@@ -16,13 +16,13 @@ namespace FixItRight_Infrastructure.Repositories
 
 		public async Task<PagedList<Transaction>> GetTransactionsByUserId(string userId, TransactionParameters transactionParameters, bool trackChange)
 		{
-			var transactions = await FindByCondition(transaction => transaction.UserId.Equals(userId), trackChange).OrderBy(c => c.CreatedAt).ToListAsync();
+			var transactions = await FindByCondition(transaction => transaction.UserId.Equals(userId), trackChange).OrderByDescending(c => c.CreatedAt).ToListAsync();
 			return PagedList<Transaction>.ToPagedList(transactions, transactionParameters.PageNumber, transactionParameters.PageSize);
 		}
 
 		public async Task<PagedList<Transaction>> GetTransactions(TransactionParameters transactionParameters, bool trackChange)
 		{
-			var transactions = await FindAll(trackChange).OrderBy(c => c.CreatedAt).ToListAsync();
+			var transactions = await FindAll(trackChange).OrderByDescending(c => c.CreatedAt).ToListAsync();
 			return PagedList<Transaction>.ToPagedList(transactions, transactionParameters.PageNumber, transactionParameters.PageSize);
 		}
 

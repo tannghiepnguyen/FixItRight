@@ -10,7 +10,6 @@ namespace FixItRight_Domain.Models
 		public string? Avatar { get; set; }
 		public Gender? Gender { get; set; }
 		public DateOnly? Birthday { get; set; }
-		public bool IsVerified { get; set; }
 		public string? CccdFront { get; set; }
 		public string? CccdBack { get; set; }
 		public DateTime CreatedAt { get; set; }

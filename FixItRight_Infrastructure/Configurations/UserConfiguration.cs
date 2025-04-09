@@ -19,7 +19,6 @@ namespace FixItRight_Infrastructure.Configurations
 			builder.Property(u => u.Avatar);
 			builder.Property(u => u.Gender).HasConversion<string>();
 			builder.Property(u => u.Birthday);
-			builder.Property(u => u.IsVerified).IsRequired();
 			builder.Property(u => u.CccdFront);
 			builder.Property(u => u.CccdBack);
 			builder.Property(u => u.CreatedAt).IsRequired();
@@ -46,7 +45,6 @@ namespace FixItRight_Infrastructure.Configurations
 				Birthday = new DateOnly(2002, 1, 23),
 				CreatedAt = DateTime.Now,
 				Active = true,
-				IsVerified = true,
 				Address = "TPHCM"
 			};
 			user.PasswordHash = new PasswordHasher<User>().HashPassword(user, "admin");

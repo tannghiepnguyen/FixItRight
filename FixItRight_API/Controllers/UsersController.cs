@@ -67,15 +67,6 @@ namespace FixItRight_API.Controllers
 			return NoContent();
 		}
 
-		[HttpPut("{id}/verify")]
-		[ProducesResponseType(StatusCodes.Status204NoContent)]
-		[Authorize(Roles = $"{nameof(Role.Admin)}")]
-		public async Task<IActionResult> VerifyUser([FromRoute] string id)
-		{
-			await service.UserService.VerifyUser(id);
-			return NoContent();
-		}
-
 		[HttpPut("{userId}/password")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[Authorize]

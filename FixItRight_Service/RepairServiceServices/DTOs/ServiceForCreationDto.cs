@@ -5,7 +5,7 @@ namespace FixItRight_Service.RepairServiceServices.DTOs
 	public record ServiceForCreationDto
 	{
 		[Required]
-		public string File { get; init; }
+		public string Image { get; init; }
 		[Required]
 		public string Name { get; init; }
 		[Required]

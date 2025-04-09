@@ -33,6 +33,7 @@ namespace FixItRight_Infrastructure.Repositories
 			bookings = bookings.Where(c => c.Status == bookingParameters.Status);
 			bookings = bookings.Include(c => c.Rating);
 			bookings = bookings.Include(c => c.Service).ThenInclude(s => s.Category);
+			bookings = bookings.OrderByDescending(c => c.BookingDate);
 			return PagedList<Booking>.ToPagedList((await bookings.ToListAsync()), bookingParameters.PageNumber, bookingParameters.PageSize);
 		}
 
@@ -42,6 +43,7 @@ namespace FixItRight_Infrastructure.Repositories
 			bookings = bookings.Where(c => c.Status == bookingParameters.Status);
 			bookings = bookings.Include(c => c.Rating);
 			bookings = bookings.Include(c => c.Service).ThenInclude(s => s.Category);
+			bookings = bookings.OrderByDescending(c => c.BookingDate);
 			return PagedList<Booking>.ToPagedList((await bookings.ToListAsync()), bookingParameters.PageNumber, bookingParameters.PageSize);
 		}
 

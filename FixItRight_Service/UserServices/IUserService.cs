@@ -16,7 +16,6 @@ namespace FixItRight_Service.UserServices
 		Task<(IEnumerable<UserForReturnDto> users, MetaData metaData)> GetUsers(UserParameters userParameters);
 		Task<IdentityResult> UpdateUser(string userId, UserForUpdateDto userForUpdate);
 		Task<IdentityResult> DeactivateUser(string userId);
-		Task<IdentityResult> VerifyUser(string userId);
 		Task<IdentityResult> UpdateUserPassword(string userId, UserForUpdatePasswordDto userForUpdatePasswordDto);
 		Task<IdentityResult> ConfirmEmail(string token, string email);
 		Task SendResetPasswordToken(string email, CancellationToken ct = default);

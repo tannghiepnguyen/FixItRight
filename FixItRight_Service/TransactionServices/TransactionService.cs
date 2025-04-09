@@ -39,29 +39,20 @@ namespace FixItRight_Service.TransactionServices
 			if (user is null) throw new UserNotFoundException(userId);
 		}
 
-		public async Task<string> CreateTransaction(TransactionForCreationDto transactionDto)
+		public async Task CreateTransaction(TransactionForCreationDto transactionDto)
 		{
+			Random random = new Random();
 			var transaction = mapper.Map<FixItRight_Domain.Models.Transaction>(transactionDto);
+			transaction.Id = Guid.NewGuid();
+			transaction.OrderCode = random.Next(100000, 999999);
 			transaction.CreatedAt = DateTime.Now;
-			transaction.Status = TransactionStatus.Pending;
+			transaction.Status = TransactionStatus.Success;
 			repositoryManager.TransactionRepository.CreateTransaction(transaction);
-			await repositoryManager.SaveAsync();
 
-			var vnpay = new VnPayLibrary();
-			vnpay.AddRequestData("vnp_Version", "2.1.0");
-			vnpay.AddRequestData("vnp_Command", "pay");
-			vnpay.AddRequestData("vnp_TmnCode", configuration.GetSection("VNPay").GetSection("TmnCode").Value);
-			vnpay.AddRequestData("vnp_Amount", (transactionDto.Amount * 100).ToString());
-			vnpay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
-			vnpay.AddRequestData("vnp_CurrCode", "VND");
-			vnpay.AddRequestData("vnp_IpAddr", utils.GetIpAddress());
-			vnpay.AddRequestData("vnp_Locale", "vn");
-			vnpay.AddRequestData("vnp_OrderType", "other");
-			vnpay.AddRequestData("vnp_OrderInfo", $"Payment for order {transaction.Id}");
-			vnpay.AddRequestData("vnp_ReturnUrl", configuration.GetSection("VNPay").GetSection("ReturnUrlMobile").Value);
-			vnpay.AddRequestData("vnp_TxnRef", transaction.Id.ToString());
-			var paymentUrl = vnpay.CreateRequestUrl(configuration.GetSection("VNPay").GetSection("Url").Value, configuration.GetSection("VNPay").GetSection("HashSecret").Value);
-			return paymentUrl; // Redirect to this URL for payment
+			var user = await userManager.FindByIdAsync(transaction.UserId);
+			user.Balance += transaction.Amount;
+			await userManager.UpdateAsync(user);
+			await repositoryManager.SaveAsync();
 		}
 
 		public async Task<(IEnumerable<TransactionForReturnDto> transactions, MetaData metaData)> GetTransactionsByUserId(string userId, TransactionParameters transactionParameters, bool trackChange)

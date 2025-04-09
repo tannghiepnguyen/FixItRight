@@ -26,6 +26,14 @@ namespace FixItRight_API.Controllers
 			this.configuration = configuration;
 		}
 
+		[HttpPost]
+		[ProducesResponseType(StatusCodes.Status201Created)]
+		[Authorize(Roles = $"{nameof(Role.Customer)}")]
+		public async Task<IActionResult> CreateTransaction([FromBody] TransactionForCreationDto transaction)
+		{
+			await serviceManager.TransactionService.CreateTransaction(transaction);
+			return StatusCode(201);
+		}
 
 		[HttpPost("{userId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
